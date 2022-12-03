@@ -55,3 +55,42 @@ func (c *Card) IsValid() error {
 
 	return nil
 }
+
+func (c *Card) Combat(other *Card, attribute string) (bool, error) {
+	var winner bool
+
+	if c.IsValid() != nil {
+		return winner, errors.New("invalid card")
+	}
+
+	if other.IsValid() != nil {
+		return winner, errors.New("invalid card")
+	}
+
+	switch attribute {
+	case "attack":
+		if c.Attack > other.Attack {
+			winner = true
+		}
+	case "defense":
+		if c.Defense > other.Defense {
+			winner = true
+		}
+	case "intelligence":
+		if c.Intelligence > other.Intelligence {
+			winner = true
+		}
+	case "agility":
+		if c.Agility > other.Agility {
+			winner = true
+		}
+	case "resilience":
+		if c.Resilience > other.Resilience {
+			winner = true
+		}
+	default:
+		return false, errors.New("invalid attribute")
+	}
+
+	return winner, nil
+}

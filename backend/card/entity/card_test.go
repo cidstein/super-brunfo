@@ -45,3 +45,36 @@ func TestGivenAValidCard_WhenCreateNewCard_ShouldReceiveNoError(t *testing.T) {
 	card := Card{"1", "name", 0, 0, 0, 0, 0}
 	assert.NoError(t, card.IsValid())
 }
+
+func TestGivenAInvalidCard_WhenCallCombat_ShouldReceiveAnError(t *testing.T) {
+	card1 := NewCard("1", "name1", 0, 0, 0, 0, 0)
+	card2 := NewCard("2", "name2", -10, 0, 0, 0, 0)
+
+	_, err := card1.Combat(&card2, "attack")
+	assert.Error(t, err)
+}
+
+func TestGivenAInvalidAttribute_WhenCallCombat_ShouldReceiveAnError(t *testing.T) {
+	card1 := NewCard("1", "name1", 0, 0, 0, 0, 0)
+	card2 := NewCard("2", "name2", 0, 0, 0, 0, 0)
+
+	_, err := card1.Combat(&card2, "power")
+	assert.Error(t, err)
+}
+
+func TestGivenAValidCard_WhenCallCombat_ShouldReceiveCard1AsWinner(t *testing.T) {
+	card1 := NewCard("1", "name1", 10, 0, 0, 0, 0)
+	card2 := NewCard("2", "name2", 0, 0, 0, 0, 0)
+
+	winner, err := card1.Combat(&card2, "attack")
+	assert.NoError(t, err)
+	assert.Equal(t, true, winner)
+}
+func TestGivenAValidCard_WhenCallCombat_ShouldReceiveCard2AsWinner(t *testing.T) {
+	card1 := NewCard("1", "name1", 0, 0, 0, 0, 0)
+	card2 := NewCard("2", "name2", 10, 0, 0, 0, 0)
+
+	winner, err := card1.Combat(&card2, "attack")
+	assert.NoError(t, err)
+	assert.Equal(t, false, winner)
+}
