@@ -1,17 +1,40 @@
 package entity
 
-import "errors"
+import (
+	"errors"
+)
 
 type Deck struct {
-	ID    string
-	Cards []Card
+	ID string
 }
 
-func NewDeck(id string, cards []Card) Deck {
+type CardInDeck struct {
+	DeckID string
+	CardID string
+}
+
+func NewDeck(id string) Deck {
 	return Deck{
-		ID:    id,
-		Cards: cards,
+		ID: id,
 	}
+}
+
+func NewCardInDeck(deckID string, cardID string) CardInDeck {
+	return CardInDeck{
+		DeckID: deckID,
+		CardID: cardID,
+	}
+}
+
+func NewCardInDeckBatch(deckID string, cardIDs []string) []CardInDeck {
+	var cardsInDeck []CardInDeck
+
+	for _, cardID := range cardIDs {
+		cardsInDeck = append(cardsInDeck, NewCardInDeck(deckID, cardID))
+		NewCardInDeck(deckID, cardID)
+	}
+
+	return cardsInDeck
 }
 
 func (d *Deck) IsValid() error {
@@ -19,20 +42,50 @@ func (d *Deck) IsValid() error {
 		return errors.New("ID is required")
 	}
 
-	if len(d.Cards) == 0 {
-		return errors.New("deck must have at least one card")
+	return nil
+}
+
+func (c *CardInDeck) IsValid() error {
+	if c.DeckID == "" {
+		return errors.New("deck ID is required")
+	}
+
+	if c.CardID == "" {
+		return errors.New("card ID is required")
 	}
 
 	return nil
 }
 
-func (d *Deck) PickCard() (Card, error) {
-	if len(d.Cards) == 0 {
-		return Card{}, errors.New("deck is empty")
-	}
+///
 
-	card := d.Cards[0]
-	d.Cards = d.Cards[1:]
+// func (d *Deck) Shuffle() (DeckInCards, error) {
+// 	if len(d.Cards) == 0 {
+// 		return Deck{}, errors.New("deck is empty")
+// 	}
 
-	return card, nil
-}
+// 	rand.Seed(time.Now().UnixNano())
+// 	rand.Shuffle(len(d.Cards), func(i, j int) { d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i] })
+
+// 	return *d, nil
+// }
+
+// func (d *Deck) Cut() (Deck, Deck, error) {
+// 	if len(d.Cards) == 0 {
+// 		return Deck{}, Deck{}, errors.New("deck is empty")
+// 	}
+
+// 	cut := len(d.Cards) / 2
+
+// 	deck1 := Deck{
+// 		ID:    d.ID,
+// 		Cards: d.Cards[:cut],
+// 	}
+
+// 	deck2 := Deck{
+// 		ID:    d.ID,
+// 		Cards: d.Cards[cut:],
+// 	}
+
+// 	return deck1, deck2, nil
+// }
