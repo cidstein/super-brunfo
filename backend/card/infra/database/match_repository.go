@@ -1,26 +1,26 @@
 package database
 
 import (
-	"database/sql"
-
 	"github.com/cidstein/super-brunfo/card/entity"
+	"github.com/jackc/pgx"
 )
 
 type MatchRepository struct {
-	Db *sql.DB
+	Db *pgx.Conn
 }
 
-func NewMatchRepository(db *sql.DB) *MatchRepository {
+func NewMatchRepository(db *pgx.Conn) *MatchRepository {
 	return &MatchRepository{Db: db}
 }
 
 func (r *MatchRepository) Save(match entity.Match) error {
 	_, err := r.Db.Exec(
-		"INSERT INTO matches (id, deck_player_id, deck_com_id, victory) VALUES ($1, $2, $3, $4)",
+		"INSERT INTO matches (id, deck_player_id, deck_com_id, victory, finished) VALUES ($1, $2, $3, $4, $5)",
 		match.ID,
 		match.PlayerDeckID,
 		match.NpcDeckID,
 		match.Victory,
+		match.Finished,
 	)
 
 	return err
@@ -28,10 +28,11 @@ func (r *MatchRepository) Save(match entity.Match) error {
 
 func (r *MatchRepository) Update(match entity.Match) error {
 	_, err := r.Db.Exec(
-		"UPDATE matches SET deck_player_id = $1, deck_com_id = $2, victory = $3 WHERE id = $4",
+		"UPDATE matches SET deck_player_id = $1, deck_com_id = $2, victory = $3, finished = $4 WHERE id = $5",
 		match.PlayerDeckID,
 		match.NpcDeckID,
 		match.Victory,
+		match.Finished,
 		match.ID,
 	)
 
@@ -42,9 +43,9 @@ func (r *MatchRepository) FindByID(id string) (entity.Match, error) {
 	var match entity.Match
 
 	err := r.Db.QueryRow(
-		"SELECT id, deck_player_id, deck_com_id, victory FROM matches WHERE id = $1",
+		"SELECT id, deck_player_id, deck_com_id, victory, finished FROM matches WHERE id = $1",
 		id,
-	).Scan(&match.ID, &match.PlayerDeckID, &match.NpcDeckID, &match.Victory)
+	).Scan(&match.ID, &match.PlayerDeckID, &match.NpcDeckID, &match.Victory, &match.Finished)
 
 	return match, err
 }
@@ -73,6 +74,8 @@ func (r *MatchRepository) ComputeWinner(match entity.Match) (entity.Match, error
 	} else {
 		match.Victory = false
 	}
+
+	match.Finished = true
 
 	r.Update(match)
 

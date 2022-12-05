@@ -1,17 +1,16 @@
 package database
 
 import (
-	"database/sql"
-
 	"github.com/cidstein/super-brunfo/card/entity"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx"
 )
 
 type DeckRepository struct {
-	Db *sql.DB
+	Db *pgx.Conn
 }
 
-func NewDeckRepository(db *sql.DB) *DeckRepository {
+func NewDeckRepository(db *pgx.Conn) *DeckRepository {
 	return &DeckRepository{Db: db}
 }
 

@@ -1,6 +1,8 @@
 package entity
 
-type CardRepositotyInterface interface {
+type CardRepositoryInterface interface {
+	Save(card Card) error
+	FindByID(id string) (Card, error)
 	FindAll() ([]Card, error)
 }
 

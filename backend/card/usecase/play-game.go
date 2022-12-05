@@ -6,12 +6,13 @@ import (
 )
 
 type PlayGameUseCase struct {
+	CardRepository  entity.CardRepositoryInterface
 	DeckRepository  entity.DeckRepositoryInterface
 	MatchRepository entity.MatchRepositoryInterface
 	RoundRepository entity.RoundRepositoryInterface
 }
 
-func (p *PlayGameUseCase) Play(matchID string) (entity.Match, error) {
+func (p *PlayGameUseCase) Play(matchID, attribute string) (entity.Match, error) {
 	/*
 		1. Get match
 		2. Check if decks are empty
@@ -27,9 +28,20 @@ func (p *PlayGameUseCase) Play(matchID string) (entity.Match, error) {
 		return match, err
 	}
 
+	if match.Finished {
+		return match, nil
+	}
+
 	playerDeck, err := p.DeckRepository.FindByID(match.PlayerDeckID)
 	if err != nil {
 		return match, err
+	}
+
+	if playerDeck.CheckIfEmpty() {
+		match, err = p.MatchRepository.ComputeWinner(match)
+		if err != nil {
+			return match, err
+		}
 	}
 
 	npcDeck, err := p.DeckRepository.FindByID(match.NpcDeckID)
@@ -37,32 +49,49 @@ func (p *PlayGameUseCase) Play(matchID string) (entity.Match, error) {
 		return match, err
 	}
 
-	for !playerDeck.CheckIfEmpty() {
-		/*
-			1. Create round
-			2. Determine who chooses the attribute
-			3. Receive attribute
-			4. Compare attributes
-			5. Determine winner
-		*/
+	/*
+		1. Create round
+		2. Determine who chooses the attribute
+		3. Receive attribute
+		4. Compare attributes
+		5. Determine winner
+	*/
 
-		round := entity.Round{
-			ID:           uuid.New().String(),
-			MatchID:      match.ID,
-			PlayerCardID: playerDeck.Cards[0].ID,
-			NpcCardID:    npcDeck.Cards[0].ID,
-			Victory:      false,
-			Attribute:    "attack",
-		}
+	playerCardID := playerDeck.Cards[0].ID
+	npcCardID := npcDeck.Cards[0].ID
 
-		err := p.RoundRepository.Save(round)
-		if err != nil {
-			return match, err
-		}
-
+	round := entity.Round{
+		ID:           uuid.New().String(),
+		MatchID:      match.ID,
+		PlayerCardID: playerCardID,
+		NpcCardID:    npcCardID,
+		Victory:      false,
+		Attribute:    attribute,
 	}
 
-	match, err = p.MatchRepository.ComputeWinner(match)
+	err = p.RoundRepository.Save(round)
+	if err != nil {
+		return match, err
+	}
+
+	playerCard, err := p.CardRepository.FindByID(playerCardID)
+	if err != nil {
+		return match, err
+	}
+
+	npcCard, err := p.CardRepository.FindByID(npcCardID)
+	if err != nil {
+		return match, err
+	}
+
+	roundWon, err := playerCard.Combat(&npcCard, attribute)
+	if err != nil {
+		return match, err
+	}
+
+	round.Victory = roundWon
+
+	err = p.RoundRepository.Update(round)
 	if err != nil {
 		return match, err
 	}

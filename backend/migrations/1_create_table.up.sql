@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS card (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     name text NOT NULL default '',
     attack integer NOT NULL default 0,
-    defence integer NOT NULL default 0,
+    defense integer NOT NULL default 0,
     intelligence integer NOT NULL default 0,
     agility integer NOT NULL default 0,
     resilience integer NOT NULL default 0,
@@ -31,13 +31,14 @@ CREATE TABLE IF NOT EXISTS match (
     player_deck_id uuid NOT NULL references deck(id),
     npc_deck_id uuid NOT NULL references deck(id),
     victory boolean default false,
+    finished boolean default false,
     created_at timestamp with time zone NOT NULL default now(),
     updated_at timestamp with time zone NOT NULL default now()
 );
 
 CREATE TYPE attribute AS ENUM (
     'ATTACK',
-    'DEFENCE',
+    'DEFENSE',
     'INTELLIGENCE',
     'AGILITY',
     'RESILIENCE'

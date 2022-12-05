@@ -45,7 +45,7 @@ func (s *StartMatchUseCase) Start() (MatchOutputDTO, error) {
 	}
 
 	id := uuid.New().String()
-	match := entity.NewMatch(id, playerDeck.ID, comDeck.ID, false)
+	match := entity.NewMatch(id, playerDeck.ID, comDeck.ID, false, false)
 
 	err = s.MatchRepository.Save(match)
 	if err != nil {

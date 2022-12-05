@@ -7,14 +7,16 @@ type Match struct {
 	PlayerDeckID string
 	NpcDeckID    string
 	Victory      bool
+	Finished     bool
 }
 
-func NewMatch(id string, deckPlayerID string, deckComID string, victory bool) Match {
+func NewMatch(id string, deckPlayerID string, deckComID string, victory, finished bool) Match {
 	return Match{
 		ID:           id,
 		PlayerDeckID: deckPlayerID,
 		NpcDeckID:    deckComID,
 		Victory:      victory,
+		Finished:     finished,
 	}
 }
 

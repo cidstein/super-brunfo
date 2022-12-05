@@ -1,16 +1,15 @@
 package database
 
 import (
-	"database/sql"
-
 	"github.com/cidstein/super-brunfo/card/entity"
+	"github.com/jackc/pgx"
 )
 
 type RoundRepository struct {
-	Db *sql.DB
+	Db *pgx.Conn
 }
 
-func NewRoundRepository(db *sql.DB) *RoundRepository {
+func NewRoundRepository(db *pgx.Conn) *RoundRepository {
 	return &RoundRepository{Db: db}
 }
 
