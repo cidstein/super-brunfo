@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS deck (
     updated_at timestamp with time zone NOT NULL default now()
 );
 
-CREATE TABLE IF NOT EXISTS card_in_deck (
+CREATE TABLE IF NOT EXISTS deck_cards (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     deck_id uuid NOT NULL references deck(id),
     card_id uuid NOT NULL references card(id),
@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS card_in_deck (
 
 CREATE TABLE IF NOT EXISTS match (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    deck_player_id uuid NOT NULL references deck(id),
-    deck_ia_id uuid NOT NULL references deck(id),
+    player_deck_id uuid NOT NULL references deck(id),
+    npc_deck_id uuid NOT NULL references deck(id),
     victory boolean default false,
     created_at timestamp with time zone NOT NULL default now(),
     updated_at timestamp with time zone NOT NULL default now()
@@ -46,8 +46,8 @@ CREATE TYPE attribute AS ENUM (
 CREATE TABLE IF NOT EXISTS round (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     match_id uuid NOT NULL references match(id),
-    card_player_id uuid NOT NULL references card(id),
-    card_ia_id uuid NOT NULL references card(id),
+    player_card_id uuid NOT NULL references card(id),
+    com_card_id uuid NOT NULL references card(id),
     victory boolean default false,
     attribute attribute NOT NULL,
     created_at timestamp with time zone NOT NULL default now(),

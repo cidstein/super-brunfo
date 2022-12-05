@@ -4,6 +4,8 @@ import (
 	"errors"
 	"math/rand"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Deck struct {
@@ -45,22 +47,37 @@ func (d *Deck) Shuffle() (Deck, error) {
 	return *d, nil
 }
 
-func (d *Deck) Cut() (Deck, Deck, error) {
+func (d *Deck) Split() (Deck, Deck, error) {
 	if len(d.Cards) == 0 {
 		return Deck{}, Deck{}, errors.New("deck is empty")
 	}
 
 	cut := len(d.Cards) / 2
 
-	deck1 := Deck{
-		ID:    d.ID,
+	playerDeck := Deck{
+		ID:    uuid.New().String(),
 		Cards: d.Cards[:cut],
 	}
 
-	deck2 := Deck{
-		ID:    d.ID,
+	npcDeck := Deck{
+		ID:    uuid.New().String(),
 		Cards: d.Cards[cut:],
 	}
 
-	return deck1, deck2, nil
+	return playerDeck, npcDeck, nil
+}
+
+func (d *Deck) Draw() (Card, error) {
+	if len(d.Cards) == 0 {
+		return Card{}, errors.New("deck is empty")
+	}
+
+	card := d.Cards[0]
+	d.Cards = d.Cards[1:]
+
+	return card, nil
+}
+
+func (d *Deck) CheckIfEmpty() bool {
+	return len(d.Cards) == 0
 }

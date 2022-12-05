@@ -1,6 +1,9 @@
 package usecase
 
-import "github.com/cidstein/super-brunfo/card/entity"
+import (
+	"github.com/cidstein/super-brunfo/card/entity"
+	"github.com/google/uuid"
+)
 
 type CardOutputDTO struct {
 	ID           string
@@ -18,44 +21,45 @@ type DeckOutputDTO struct {
 }
 
 type MatchOutputDTO struct {
-	ID     string
-	Deck1  DeckOutputDTO
-	Deck2  DeckOutputDTO
-	Winner string
+	ID         string
+	PlayerDeck DeckOutputDTO
+	ComDeck    DeckOutputDTO
+	Winner     bool
 }
 
 type StartMatchUseCase struct {
+	DeckRepository  entity.DeckRepositoryInterface
 	MatchRepository entity.MatchRepositoryInterface
 }
 
-// func (s *StartMatchUseCase) Start(deck1 entity.Deck, deck2 entity.Deck) (MatchOutputDTO, error) {
-// 	cards := s.MatchRepository.FindAll()
-// 	if len(cards) < 2 {
-// 		return MatchOutputDTO{}, nil
-// 	}
+func (s *StartMatchUseCase) Start() (MatchOutputDTO, error) {
+	deck, err := s.DeckRepository.Save()
+	if err != nil {
+		return MatchOutputDTO{}, err
+	}
 
-// 	match := entity.NewMatch(deck1, deck2)
-// 	match.Start()
+	deck.Shuffle()
+	playerDeck, comDeck, err := deck.Split()
+	if err != nil {
+		return MatchOutputDTO{}, err
+	}
 
-// 	err := s.MatchRepository.Save(match)
-// 	if err != nil {
-// 		return MatchOutputDTO{}, err
-// 	}
+	id := uuid.New().String()
+	match := entity.NewMatch(id, playerDeck.ID, comDeck.ID, false)
 
-// 	return MatchOutputDTO{
-// 		ID:     match.ID,
-// 		Deck1:  convertDeckToOutputDTO(match.Deck1),
-// 		Deck2:  convertDeckToOutputDTO(match.Deck2),
-// 		Winner: match.Winner,
-// 	}, nil
-// }
+	err = s.MatchRepository.Save(match)
+	if err != nil {
+		return MatchOutputDTO{}, err
+	}
 
-func StartMatch() (*MatchOutputDTO, error) {
-	/*
-		Embaralhar deck
-		Atribuir deck para cada jogador
-		Definir quem começa
-	*/
-
-	return nil, nil
+	return MatchOutputDTO{
+		ID: match.ID,
+		PlayerDeck: DeckOutputDTO{
+			ID: playerDeck.ID,
+		},
+		ComDeck: DeckOutputDTO{
+			ID: comDeck.ID,
+		},
+		Winner: false,
+	}, nil
 }
