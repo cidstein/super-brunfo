@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"context"
+
 	"github.com/cidstein/super-brunfo/card/entity"
 	"github.com/google/uuid"
 )
@@ -12,7 +14,7 @@ type PlayGameUseCase struct {
 	RoundRepository entity.RoundRepositoryInterface
 }
 
-func (p *PlayGameUseCase) Play(matchID, attribute string) (entity.Match, error) {
+func (p *PlayGameUseCase) Play(ctx context.Context, matchID, attribute string) (entity.Match, error) {
 	/*
 		1. Get match
 		2. Check if decks are empty
@@ -23,7 +25,7 @@ func (p *PlayGameUseCase) Play(matchID, attribute string) (entity.Match, error) 
 
 	*/
 
-	match, err := p.MatchRepository.FindByID(matchID)
+	match, err := p.MatchRepository.FindByID(ctx, matchID)
 	if err != nil {
 		return match, err
 	}
@@ -32,19 +34,19 @@ func (p *PlayGameUseCase) Play(matchID, attribute string) (entity.Match, error) 
 		return match, nil
 	}
 
-	playerDeck, err := p.DeckRepository.FindByID(match.PlayerDeckID)
+	playerDeck, err := p.DeckRepository.FindByID(ctx, match.PlayerDeckID)
 	if err != nil {
 		return match, err
 	}
 
 	if playerDeck.CheckIfEmpty() {
-		match, err = p.MatchRepository.ComputeWinner(match)
+		match, err = p.MatchRepository.ComputeWinner(ctx, match)
 		if err != nil {
 			return match, err
 		}
 	}
 
-	npcDeck, err := p.DeckRepository.FindByID(match.NpcDeckID)
+	npcDeck, err := p.DeckRepository.FindByID(ctx, match.NpcDeckID)
 	if err != nil {
 		return match, err
 	}
@@ -69,17 +71,17 @@ func (p *PlayGameUseCase) Play(matchID, attribute string) (entity.Match, error) 
 		Attribute:    attribute,
 	}
 
-	err = p.RoundRepository.Save(round)
+	err = p.RoundRepository.Save(ctx, round)
 	if err != nil {
 		return match, err
 	}
 
-	playerCard, err := p.CardRepository.FindByID(playerCardID)
+	playerCard, err := p.CardRepository.FindByID(ctx, playerCardID)
 	if err != nil {
 		return match, err
 	}
 
-	npcCard, err := p.CardRepository.FindByID(npcCardID)
+	npcCard, err := p.CardRepository.FindByID(ctx, npcCardID)
 	if err != nil {
 		return match, err
 	}
@@ -91,7 +93,7 @@ func (p *PlayGameUseCase) Play(matchID, attribute string) (entity.Match, error) 
 
 	round.Victory = roundWon
 
-	err = p.RoundRepository.Update(round)
+	err = p.RoundRepository.Update(ctx, round)
 	if err != nil {
 		return match, err
 	}

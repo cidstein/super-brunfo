@@ -1,9 +1,11 @@
 package database
 
 import (
+	"context"
+
 	"github.com/cidstein/super-brunfo/card/entity"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v5"
 )
 
 type DeckRepository struct {
@@ -14,8 +16,8 @@ func NewDeckRepository(db *pgx.Conn) *DeckRepository {
 	return &DeckRepository{Db: db}
 }
 
-func (r *DeckRepository) Save() (*entity.Deck, error) {
-	rows, err := r.Db.Query("SELECT id from cards")
+func (r *DeckRepository) Save(ctx context.Context) (*entity.Deck, error) {
+	rows, err := r.Db.Query(ctx, "SELECT id from cards")
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +36,9 @@ func (r *DeckRepository) Save() (*entity.Deck, error) {
 	deck := entity.NewDeck(id, cards)
 
 	_, err = r.Db.Exec(
-		"INSERT INTO deck (id) VALUES ($1)", deck.ID,
+		ctx,
+		"INSERT INTO deck (id) VALUES ($1)",
+		deck.ID,
 	)
 	if err != nil {
 		return nil, err
@@ -42,7 +46,10 @@ func (r *DeckRepository) Save() (*entity.Deck, error) {
 
 	for _, card := range deck.Cards {
 		_, err = r.Db.Exec(
-			"INSERT INTO deck_cards (deck_id, card_id) VALUES ($1, $2)", deck.ID, card.ID,
+			ctx,
+			"INSERT INTO deck_cards (deck_id, card_id) VALUES ($1, $2)",
+			deck.ID,
+			card.ID,
 		)
 		if err != nil {
 			return nil, err
@@ -52,10 +59,33 @@ func (r *DeckRepository) Save() (*entity.Deck, error) {
 	return &deck, nil
 }
 
-func (r *DeckRepository) FindByID(id string) (entity.Deck, error) {
+func (r *DeckRepository) Delete(ctx context.Context, id string) error {
+	_, err := r.Db.Exec(
+		ctx,
+		"DELETE FROM deck_cards WHERE deck_id = $1",
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.Db.Exec(
+		ctx,
+		"DELETE FROM deck WHERE id = $1",
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *DeckRepository) FindByID(ctx context.Context, id string) (entity.Deck, error) {
 	var deck entity.Deck
 
 	err := r.Db.QueryRow(
+		ctx,
 		"SELECT id FROM deck WHERE id = $1",
 		id,
 	).Scan(&deck.ID)
@@ -64,6 +94,7 @@ func (r *DeckRepository) FindByID(id string) (entity.Deck, error) {
 	}
 
 	rows, err := r.Db.Query(
+		ctx,
 		"SELECT card_id FROM deck_cards WHERE deck_id = $1",
 		id,
 	)

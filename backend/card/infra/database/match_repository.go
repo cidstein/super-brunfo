@@ -1,8 +1,10 @@
 package database
 
 import (
+	"context"
+
 	"github.com/cidstein/super-brunfo/card/entity"
-	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v5"
 )
 
 type MatchRepository struct {
@@ -13,8 +15,9 @@ func NewMatchRepository(db *pgx.Conn) *MatchRepository {
 	return &MatchRepository{Db: db}
 }
 
-func (r *MatchRepository) Save(match entity.Match) error {
+func (r *MatchRepository) Save(ctx context.Context, match entity.Match) error {
 	_, err := r.Db.Exec(
+		ctx,
 		"INSERT INTO matches (id, deck_player_id, deck_com_id, victory, finished) VALUES ($1, $2, $3, $4, $5)",
 		match.ID,
 		match.PlayerDeckID,
@@ -26,8 +29,9 @@ func (r *MatchRepository) Save(match entity.Match) error {
 	return err
 }
 
-func (r *MatchRepository) Update(match entity.Match) error {
+func (r *MatchRepository) Update(ctx context.Context, match entity.Match) error {
 	_, err := r.Db.Exec(
+		ctx,
 		"UPDATE matches SET deck_player_id = $1, deck_com_id = $2, victory = $3, finished = $4 WHERE id = $5",
 		match.PlayerDeckID,
 		match.NpcDeckID,
@@ -39,10 +43,21 @@ func (r *MatchRepository) Update(match entity.Match) error {
 	return err
 }
 
-func (r *MatchRepository) FindByID(id string) (entity.Match, error) {
+func (r *MatchRepository) Delete(ctx context.Context, id string) error {
+	_, err := r.Db.Exec(
+		ctx,
+		"DELETE FROM matches WHERE id = $1",
+		id,
+	)
+
+	return err
+}
+
+func (r *MatchRepository) FindByID(ctx context.Context, id string) (entity.Match, error) {
 	var match entity.Match
 
 	err := r.Db.QueryRow(
+		ctx,
 		"SELECT id, deck_player_id, deck_com_id, victory, finished FROM matches WHERE id = $1",
 		id,
 	).Scan(&match.ID, &match.PlayerDeckID, &match.NpcDeckID, &match.Victory, &match.Finished)
@@ -50,10 +65,11 @@ func (r *MatchRepository) FindByID(id string) (entity.Match, error) {
 	return match, err
 }
 
-func (r *MatchRepository) ComputeWinner(match entity.Match) (entity.Match, error) {
+func (r *MatchRepository) ComputeWinner(ctx context.Context, match entity.Match) (entity.Match, error) {
 	var rounds, roundWons int
 
 	err := r.Db.QueryRow(
+		ctx,
 		"SELECT count(*) FROM round WHERE match_id = $1",
 		match.ID,
 	).Scan(&rounds)
@@ -62,6 +78,7 @@ func (r *MatchRepository) ComputeWinner(match entity.Match) (entity.Match, error
 	}
 
 	err = r.Db.QueryRow(
+		ctx,
 		"SELECT count(*) FROM round WHERE match_id = $1 AND victory",
 		match.ID,
 	).Scan(&roundWons)
@@ -77,7 +94,7 @@ func (r *MatchRepository) ComputeWinner(match entity.Match) (entity.Match, error
 
 	match.Finished = true
 
-	r.Update(match)
+	r.Update(ctx, match)
 
 	return match, nil
 }

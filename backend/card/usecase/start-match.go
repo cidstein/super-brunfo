@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"context"
+
 	"github.com/cidstein/super-brunfo/card/entity"
 	"github.com/google/uuid"
 )
@@ -32,8 +34,8 @@ type StartMatchUseCase struct {
 	MatchRepository entity.MatchRepositoryInterface
 }
 
-func (s *StartMatchUseCase) Start() (MatchOutputDTO, error) {
-	deck, err := s.DeckRepository.Save()
+func (s *StartMatchUseCase) Start(ctx context.Context) (MatchOutputDTO, error) {
+	deck, err := s.DeckRepository.Save(ctx)
 	if err != nil {
 		return MatchOutputDTO{}, err
 	}
@@ -47,7 +49,7 @@ func (s *StartMatchUseCase) Start() (MatchOutputDTO, error) {
 	id := uuid.New().String()
 	match := entity.NewMatch(id, playerDeck.ID, comDeck.ID, false, false)
 
-	err = s.MatchRepository.Save(match)
+	err = s.MatchRepository.Save(ctx, match)
 	if err != nil {
 		return MatchOutputDTO{}, err
 	}
