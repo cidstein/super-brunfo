@@ -5,6 +5,7 @@ import (
 
 	"github.com/cidstein/super-brunfo/game/entity"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 type PlayGameUseCase struct {
@@ -14,7 +15,7 @@ type PlayGameUseCase struct {
 	RoundRepository entity.RoundRepositoryInterface
 }
 
-func (p *PlayGameUseCase) Play(ctx context.Context, matchID, attribute string) (entity.Match, error) {
+func (p *PlayGameUseCase) Play(ctx context.Context, db *pgx.Conn, matchID, attribute string) (entity.Match, error) {
 	/*
 		1. Get match
 		2. Check if decks are empty

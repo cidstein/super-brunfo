@@ -15,7 +15,8 @@ func main() {
 		panic(err)
 	}
 
-	http.Handle("/start", handlers.StartMatch(db))
+	http.HandleFunc("/start", handlers.StartMatch(db))
+	http.HandleFunc("/play", handlers.PlayGame(db))
 
 	http.ListenAndServe(":8080", nil)
 }

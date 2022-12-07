@@ -27,7 +27,7 @@ type DeckOutputDTO struct {
 type MatchOutputDTO struct {
 	ID         string
 	PlayerDeck DeckOutputDTO
-	ComDeck    DeckOutputDTO
+	NpcDeck    DeckOutputDTO
 	Winner     bool
 }
 
@@ -35,6 +35,22 @@ type StartMatchUseCase struct {
 	CardRepository  entity.CardRepositoryInterface
 	DeckRepository  entity.DeckRepositoryInterface
 	MatchRepository entity.MatchRepositoryInterface
+}
+
+func cardsDTO(cards []entity.Card) []CardOutputDTO {
+	var cardsDTO []CardOutputDTO
+	for card := range cards {
+		cardsDTO = append(cardsDTO, CardOutputDTO{
+			ID:           cards[card].ID,
+			Name:         cards[card].Name,
+			Attack:       cards[card].Attack,
+			Defense:      cards[card].Defense,
+			Intelligence: cards[card].Intelligence,
+			Agility:      cards[card].Agility,
+			Resilience:   cards[card].Resilience,
+		})
+	}
+	return cardsDTO
 }
 
 func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutputDTO, error) {
@@ -45,6 +61,9 @@ func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutpu
 	}
 
 	cut := len(cards) / 2
+
+	cardsPlayer := cardsDTO(cards[:cut])
+	cardsNpc := cardsDTO(cards[cut:])
 
 	s.DeckRepository = database.NewDeckRepository(db)
 	playerDeck, err := s.DeckRepository.Save(ctx, cards[:cut])
@@ -57,6 +76,7 @@ func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutpu
 		return MatchOutputDTO{}, err
 	}
 
+	// Not working yet, but know how to do it
 	playerDeck.Shuffle()
 	npcDeck.Shuffle()
 
@@ -73,10 +93,12 @@ func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutpu
 	return MatchOutputDTO{
 		ID: match.ID,
 		PlayerDeck: DeckOutputDTO{
-			ID: playerDeck.ID,
+			ID:    playerDeck.ID,
+			Cards: cardsPlayer,
 		},
-		ComDeck: DeckOutputDTO{
-			ID: npcDeck.ID,
+		NpcDeck: DeckOutputDTO{
+			ID:    npcDeck.ID,
+			Cards: cardsNpc,
 		},
 		Winner: false,
 	}, nil
