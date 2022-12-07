@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 
-	"github.com/cidstein/super-brunfo/card/entity"
+	"github.com/cidstein/super-brunfo/game/entity"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/suite"

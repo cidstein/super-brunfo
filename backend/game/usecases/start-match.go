@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/cidstein/super-brunfo/card/entity"
+	"github.com/cidstein/super-brunfo/game/entity"
 	"github.com/google/uuid"
 )
 
