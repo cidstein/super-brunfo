@@ -30,9 +30,13 @@ func (suite *RoundRepositoryTestSuite) TestGivenAnRound_WhenSave_ThenShouldSaveR
 	roundID := uuid.New().String()
 	matchID := uuid.New().String()
 
+	cardRepo := NewCardRepository(suite.Db)
+	cards, err := cardRepo.FindAll(suite.ctx)
+	suite.NoError(err)
+
 	deckRepo := NewDeckRepository(suite.Db)
 
-	deck, err := deckRepo.Save(suite.ctx)
+	deck, err := deckRepo.Save(suite.ctx, cards)
 	suite.NoError(err)
 
 	playerDeck, npcDeck, err := deck.Split()

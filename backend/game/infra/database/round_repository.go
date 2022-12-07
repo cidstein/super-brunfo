@@ -18,7 +18,7 @@ func NewRoundRepository(db *pgx.Conn) *RoundRepository {
 func (r *RoundRepository) Save(ctx context.Context, round entity.Round) error {
 	_, err := r.Db.Exec(
 		ctx,
-		"INSERT INTO rounds (id, match_id, player_card_id, npc_card_id, victory, attribute) VALUES ($1, $2, $3, $4, $5, $6)",
+		"INSERT INTO round (id, match_id, player_card_id, npc_card_id, victory, attribute) VALUES ($1, $2, $3, $4, $5, $6)",
 		round.ID,
 		round.MatchID,
 		round.PlayerCardID,
@@ -33,7 +33,7 @@ func (r *RoundRepository) Save(ctx context.Context, round entity.Round) error {
 func (r *RoundRepository) Update(ctx context.Context, round entity.Round) error {
 	_, err := r.Db.Exec(
 		ctx,
-		"UPDATE rounds SET match_id = $1, player_card_id = $2, npc_card_id = $3, victory = $4, attribute = $5 WHERE id = $6",
+		"UPDATE round SET match_id = $1, player_card_id = $2, npc_card_id = $3, victory = $4, attribute = $5 WHERE id = $6",
 		round.MatchID,
 		round.PlayerCardID,
 		round.NpcCardID,

@@ -5,12 +5,12 @@ import "context"
 type CardRepositoryInterface interface {
 	Save(ctx context.Context, card Card) error
 	Delete(ctx context.Context, id string) error
-	FindByID(ctx context.Context, id string) (Card, error)
+	FindByID(ctx context.Context, id string) (*Card, error)
 	FindAll(ctx context.Context) ([]Card, error)
 }
 
 type DeckRepositoryInterface interface {
-	Save(ctx context.Context) (*Deck, error)
+	Save(ctx context.Context, cards []Card) (*Deck, error)
 	Delete(ctx context.Context, id string) error
 	FindByID(ctx context.Context, id string) (Deck, error)
 }

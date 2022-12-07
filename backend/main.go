@@ -1,9 +1,21 @@
 package main
 
 import (
-	"github.com/cidstein/super-brunfo/cmd"
+	"context"
+	"net/http"
+
+	"github.com/cidstein/super-brunfo/game/handlers"
+	"github.com/jackc/pgx/v5"
 )
 
 func main() {
-	cmd.Execute()
+	ctx := context.Background()
+	db, err := pgx.Connect(ctx, "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+
+	http.Handle("/start", handlers.StartMatch(db))
+
+	http.ListenAndServe(":8080", nil)
 }

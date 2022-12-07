@@ -1,10 +1,12 @@
-package usecase
+package usecases
 
 import (
 	"context"
 
 	"github.com/cidstein/super-brunfo/game/entity"
+	"github.com/cidstein/super-brunfo/game/infra/database"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 type CardOutputDTO struct {
@@ -30,24 +32,38 @@ type MatchOutputDTO struct {
 }
 
 type StartMatchUseCase struct {
+	CardRepository  entity.CardRepositoryInterface
 	DeckRepository  entity.DeckRepositoryInterface
 	MatchRepository entity.MatchRepositoryInterface
 }
 
-func (s *StartMatchUseCase) Start(ctx context.Context) (MatchOutputDTO, error) {
-	deck, err := s.DeckRepository.Save(ctx)
+func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutputDTO, error) {
+	s.CardRepository = database.NewCardRepository(db)
+	cards, err := s.CardRepository.FindAll(ctx)
 	if err != nil {
 		return MatchOutputDTO{}, err
 	}
 
-	deck.Shuffle()
-	playerDeck, comDeck, err := deck.Split()
+	cut := len(cards) / 2
+
+	s.DeckRepository = database.NewDeckRepository(db)
+	playerDeck, err := s.DeckRepository.Save(ctx, cards[:cut])
 	if err != nil {
 		return MatchOutputDTO{}, err
 	}
+
+	npcDeck, err := s.DeckRepository.Save(ctx, cards[cut:])
+	if err != nil {
+		return MatchOutputDTO{}, err
+	}
+
+	playerDeck.Shuffle()
+	npcDeck.Shuffle()
 
 	id := uuid.New().String()
-	match := entity.NewMatch(id, playerDeck.ID, comDeck.ID, false, false)
+	match := entity.NewMatch(id, playerDeck.ID, npcDeck.ID, false, false)
+
+	s.MatchRepository = database.NewMatchRepository(db)
 
 	err = s.MatchRepository.Save(ctx, match)
 	if err != nil {
@@ -60,7 +76,7 @@ func (s *StartMatchUseCase) Start(ctx context.Context) (MatchOutputDTO, error) {
 			ID: playerDeck.ID,
 		},
 		ComDeck: DeckOutputDTO{
-			ID: comDeck.ID,
+			ID: npcDeck.ID,
 		},
 		Winner: false,
 	}, nil

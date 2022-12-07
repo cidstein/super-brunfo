@@ -1,4 +1,4 @@
-package usecase
+package usecases
 
 import (
 	"context"
@@ -86,7 +86,7 @@ func (p *PlayGameUseCase) Play(ctx context.Context, matchID, attribute string) (
 		return match, err
 	}
 
-	roundWon, err := playerCard.Combat(&npcCard, attribute)
+	roundWon, err := playerCard.Combat(npcCard, attribute)
 	if err != nil {
 		return match, err
 	}

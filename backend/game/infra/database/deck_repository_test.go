@@ -25,9 +25,13 @@ func (suite *DeckRepositoryTestSuite) TearDownSuite() {
 }
 
 func (suite *DeckRepositoryTestSuite) TestGivenAnDeck_WhenSave_ThenShouldSaveDeck() {
+	cardRepo := NewCardRepository(suite.Db)
+	cards, err := cardRepo.FindAll(suite.ctx)
+	suite.NoError(err)
+
 	repo := NewDeckRepository(suite.Db)
 
-	deck, err := repo.Save(suite.ctx)
+	deck, err := repo.Save(suite.ctx, cards)
 	suite.NoError(err)
 
 	d, err := repo.FindByID(suite.ctx, deck.ID)

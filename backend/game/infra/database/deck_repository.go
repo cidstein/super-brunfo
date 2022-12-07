@@ -16,26 +16,26 @@ func NewDeckRepository(db *pgx.Conn) *DeckRepository {
 	return &DeckRepository{Db: db}
 }
 
-func (r *DeckRepository) Save(ctx context.Context) (*entity.Deck, error) {
-	rows, err := r.Db.Query(ctx, "SELECT id from cards")
-	if err != nil {
-		return nil, err
-	}
+func (r *DeckRepository) Save(ctx context.Context, cards []entity.Card) (*entity.Deck, error) {
+	// rows, err := r.Db.Query(ctx, "SELECT id from card")
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	var cards []entity.Card
-	for rows.Next() {
-		var card entity.Card
-		err = rows.Scan(&card.ID)
-		if err != nil {
-			return nil, err
-		}
-		cards = append(cards, card)
-	}
+	// var cards []entity.Card
+	// for rows.Next() {
+	// 	var card entity.Card
+	// 	err = rows.Scan(&card.ID)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	cards = append(cards, card)
+	// }
 
 	id := uuid.New().String()
 	deck := entity.NewDeck(id, cards)
 
-	_, err = r.Db.Exec(
+	_, err := r.Db.Exec(
 		ctx,
 		"INSERT INTO deck (id) VALUES ($1)",
 		deck.ID,

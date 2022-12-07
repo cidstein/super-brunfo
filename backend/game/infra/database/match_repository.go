@@ -18,7 +18,7 @@ func NewMatchRepository(db *pgx.Conn) *MatchRepository {
 func (r *MatchRepository) Save(ctx context.Context, match entity.Match) error {
 	_, err := r.Db.Exec(
 		ctx,
-		"INSERT INTO matches (id, deck_player_id, deck_com_id, victory, finished) VALUES ($1, $2, $3, $4, $5)",
+		"INSERT INTO match (id, player_deck_id, npc_deck_id, victory, finished) VALUES ($1, $2, $3, $4, $5)",
 		match.ID,
 		match.PlayerDeckID,
 		match.NpcDeckID,
@@ -32,7 +32,7 @@ func (r *MatchRepository) Save(ctx context.Context, match entity.Match) error {
 func (r *MatchRepository) Update(ctx context.Context, match entity.Match) error {
 	_, err := r.Db.Exec(
 		ctx,
-		"UPDATE matches SET deck_player_id = $1, deck_com_id = $2, victory = $3, finished = $4 WHERE id = $5",
+		"UPDATE match SET player_deck_id = $1, npc_deck_id = $2, victory = $3, finished = $4 WHERE id = $5",
 		match.PlayerDeckID,
 		match.NpcDeckID,
 		match.Victory,
@@ -46,7 +46,7 @@ func (r *MatchRepository) Update(ctx context.Context, match entity.Match) error 
 func (r *MatchRepository) Delete(ctx context.Context, id string) error {
 	_, err := r.Db.Exec(
 		ctx,
-		"DELETE FROM matches WHERE id = $1",
+		"DELETE FROM match WHERE id = $1",
 		id,
 	)
 
@@ -58,7 +58,7 @@ func (r *MatchRepository) FindByID(ctx context.Context, id string) (entity.Match
 
 	err := r.Db.QueryRow(
 		ctx,
-		"SELECT id, deck_player_id, deck_com_id, victory, finished FROM matches WHERE id = $1",
+		"SELECT id, player_deck_id, npc_deck_id, victory, finished FROM match WHERE id = $1",
 		id,
 	).Scan(&match.ID, &match.PlayerDeckID, &match.NpcDeckID, &match.Victory, &match.Finished)
 

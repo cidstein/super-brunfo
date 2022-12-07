@@ -29,9 +29,12 @@ func (suite *MatchRepositoryTestSuite) TearDownSuite() {
 func (suite *MatchRepositoryTestSuite) TestGivenAnMatch_WhenSave_ThenShouldSaveMatch() {
 	matchID := uuid.New().String()
 
-	deckRepo := NewDeckRepository(suite.Db)
+	cardRepo := NewCardRepository(suite.Db)
+	cards, err := cardRepo.FindAll(suite.ctx)
+	suite.NoError(err)
 
-	deck, err := deckRepo.Save(suite.ctx)
+	deckRepo := NewDeckRepository(suite.Db)
+	deck, err := deckRepo.Save(suite.ctx, cards)
 	suite.NoError(err)
 
 	playerDeck, npcDeck, err := deck.Split()
