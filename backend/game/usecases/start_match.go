@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"errors"
 
 	"github.com/cidstein/super-brunfo/game/entity"
 	"github.com/cidstein/super-brunfo/game/infra/database"
@@ -28,7 +29,8 @@ type MatchOutputDTO struct {
 	ID         string
 	PlayerDeck DeckOutputDTO
 	NpcDeck    DeckOutputDTO
-	Winner     bool
+	Victory    bool
+	Finished   bool
 }
 
 type StartMatchUseCase struct {
@@ -57,28 +59,33 @@ func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutpu
 	s.CardRepository = database.NewCardRepository(db)
 	cards, err := s.CardRepository.FindAll(ctx)
 	if err != nil {
-		return MatchOutputDTO{}, err
+		msg := "Error finding cards: " + err.Error()
+		return MatchOutputDTO{}, errors.New(msg)
 	}
 
 	cut := len(cards) / 2
 
-	cardsPlayer := cardsDTO(cards[:cut])
-	cardsNpc := cardsDTO(cards[cut:])
+	pd := entity.NewDeck(uuid.New().String(), cards[:cut])
+	nd := entity.NewDeck(uuid.New().String(), cards[cut:])
+
+	pd.Shuffle()
+	nd.Shuffle()
+
+	cardsPlayer := cardsDTO(pd.Cards)
+	cardsNpc := cardsDTO(nd.Cards)
 
 	s.DeckRepository = database.NewDeckRepository(db)
-	playerDeck, err := s.DeckRepository.Save(ctx, cards[:cut])
+	playerDeck, err := s.DeckRepository.Save(ctx, pd)
 	if err != nil {
-		return MatchOutputDTO{}, err
+		msg := "Error saving player deck: " + err.Error()
+		return MatchOutputDTO{}, errors.New(msg)
 	}
 
-	npcDeck, err := s.DeckRepository.Save(ctx, cards[cut:])
+	npcDeck, err := s.DeckRepository.Save(ctx, nd)
 	if err != nil {
-		return MatchOutputDTO{}, err
+		msg := "Error saving npc deck: " + err.Error()
+		return MatchOutputDTO{}, errors.New(msg)
 	}
-
-	// Not working yet, but know how to do it
-	playerDeck.Shuffle()
-	npcDeck.Shuffle()
 
 	id := uuid.New().String()
 	match := entity.NewMatch(id, playerDeck.ID, npcDeck.ID, false, false)
@@ -87,7 +94,8 @@ func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutpu
 
 	err = s.MatchRepository.Save(ctx, match)
 	if err != nil {
-		return MatchOutputDTO{}, err
+		msg := "Error saving match: " + err.Error()
+		return MatchOutputDTO{}, errors.New(msg)
 	}
 
 	return MatchOutputDTO{
@@ -100,6 +108,5 @@ func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutpu
 			ID:    npcDeck.ID,
 			Cards: cardsNpc,
 		},
-		Winner: false,
 	}, nil
 }

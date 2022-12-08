@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/cidstein/super-brunfo/game/entity"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -16,25 +15,7 @@ func NewDeckRepository(db *pgx.Conn) *DeckRepository {
 	return &DeckRepository{Db: db}
 }
 
-func (r *DeckRepository) Save(ctx context.Context, cards []entity.Card) (*entity.Deck, error) {
-	// rows, err := r.Db.Query(ctx, "SELECT id from card")
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// var cards []entity.Card
-	// for rows.Next() {
-	// 	var card entity.Card
-	// 	err = rows.Scan(&card.ID)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	cards = append(cards, card)
-	// }
-
-	id := uuid.New().String()
-	deck := entity.NewDeck(id, cards)
-
+func (r *DeckRepository) Save(ctx context.Context, deck entity.Deck) (*entity.Deck, error) {
 	_, err := r.Db.Exec(
 		ctx,
 		"INSERT INTO deck (id) VALUES ($1)",
@@ -73,6 +54,20 @@ func (r *DeckRepository) Delete(ctx context.Context, id string) error {
 		ctx,
 		"DELETE FROM deck WHERE id = $1",
 		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *DeckRepository) DrawCard(ctx context.Context, deckID, cardID string) error {
+	_, err := r.Db.Exec(
+		ctx,
+		"DELETE FROM deck_cards WHERE deck_id = $1 AND card_id = $2",
+		deckID,
+		cardID,
 	)
 	if err != nil {
 		return err

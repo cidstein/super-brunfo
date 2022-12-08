@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 
+	"github.com/cidstein/super-brunfo/game/entity"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/suite"
 )
@@ -30,14 +32,21 @@ func (suite *DeckRepositoryTestSuite) TestGivenAnDeck_WhenSave_ThenShouldSaveDec
 	suite.NoError(err)
 
 	repo := NewDeckRepository(suite.Db)
+	d := entity.Deck{
+		ID:    uuid.New().String(),
+		Cards: cards,
+	}
 
-	deck, err := repo.Save(suite.ctx, cards)
+	deck, err := repo.Save(suite.ctx, d)
 	suite.NoError(err)
 
-	d, err := repo.FindByID(suite.ctx, deck.ID)
+	d, err = repo.FindByID(suite.ctx, deck.ID)
 	suite.NoError(err)
 	suite.Equal(deck.ID, d.ID)
 
-	err = repo.Delete(suite.ctx, deck.ID)
+	err = repo.DrawCard(suite.ctx, deck.ID, cards[0].ID)
+	suite.NoError(err)
+
+	err = repo.Delete(suite.ctx, d.ID)
 	suite.NoError(err)
 }

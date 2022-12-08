@@ -35,11 +35,21 @@ func (suite *RoundRepositoryTestSuite) TestGivenAnRound_WhenSave_ThenShouldSaveR
 	suite.NoError(err)
 
 	deckRepo := NewDeckRepository(suite.Db)
+	cut := len(cards) / 2
+	pd := entity.Deck{
+		ID:    uuid.New().String(),
+		Cards: cards[:cut],
+	}
 
-	deck, err := deckRepo.Save(suite.ctx, cards)
+	nd := entity.Deck{
+		ID:    uuid.New().String(),
+		Cards: cards[cut:],
+	}
+
+	playerDeck, err := deckRepo.Save(suite.ctx, pd)
 	suite.NoError(err)
 
-	playerDeck, npcDeck, err := deck.Split()
+	npcDeck, err := deckRepo.Save(suite.ctx, nd)
 	suite.NoError(err)
 
 	match := entity.NewMatch(matchID, playerDeck.ID, npcDeck.ID, false, false)
@@ -67,8 +77,5 @@ func (suite *RoundRepositoryTestSuite) TestGivenAnRound_WhenSave_ThenShouldSaveR
 	round.Victory = victory
 
 	err = roundRepo.Update(suite.ctx, round)
-	suite.NoError(err)
-
-	err = matchRepo.Delete(suite.ctx, deck.ID)
 	suite.NoError(err)
 }

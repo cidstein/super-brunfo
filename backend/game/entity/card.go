@@ -1,6 +1,8 @@
 package entity
 
-import "errors"
+import (
+	"errors"
+)
 
 type Card struct {
 	ID           string
@@ -45,7 +47,7 @@ func (c *Card) IsValid() error {
 		return errors.New("intelligence must be between 0 and 100")
 	}
 
-	if c.Agility < 0 || c.Agility > 10 {
+	if c.Agility < 0 || c.Agility > 100 {
 		return errors.New("agility must be between 0 and 100")
 	}
 
@@ -60,11 +62,11 @@ func (c *Card) Combat(other *Card, attribute string) (bool, error) {
 	var winner bool
 
 	if c.IsValid() != nil {
-		return winner, errors.New("invalid card")
+		return winner, errors.New("player invalid card")
 	}
 
 	if other.IsValid() != nil {
-		return winner, errors.New("invalid card")
+		return winner, errors.New("npc invalid card")
 	}
 
 	switch attribute {

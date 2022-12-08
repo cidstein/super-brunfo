@@ -36,21 +36,13 @@ CREATE TABLE IF NOT EXISTS match (
     updated_at timestamp with time zone NOT NULL default now()
 );
 
-CREATE TYPE attribute AS ENUM (
-    'ATTACK',
-    'DEFENSE',
-    'INTELLIGENCE',
-    'AGILITY',
-    'RESILIENCE'
-);
-
 CREATE TABLE IF NOT EXISTS round (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     match_id uuid NOT NULL references match(id),
     player_card_id uuid NOT NULL references card(id),
-    com_card_id uuid NOT NULL references card(id),
+    npc_card_id uuid NOT NULL references card(id),
     victory boolean default false,
-    attribute attribute NOT NULL,
+    "attribute" text NOT NULL,
     created_at timestamp with time zone NOT NULL default now(),
     updated_at timestamp with time zone NOT NULL default now()
 );

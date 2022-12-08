@@ -10,8 +10,9 @@ type CardRepositoryInterface interface {
 }
 
 type DeckRepositoryInterface interface {
-	Save(ctx context.Context, cards []Card) (*Deck, error)
+	Save(ctx context.Context, deck Deck) (*Deck, error)
 	Delete(ctx context.Context, id string) error
+	DrawCard(ctx context.Context, deckID, cardID string) error
 	FindByID(ctx context.Context, id string) (Deck, error)
 }
 

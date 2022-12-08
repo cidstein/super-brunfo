@@ -1,39 +1,43 @@
-package database
+package usecases
 
 import (
 	"context"
 
 	"github.com/cidstein/super-brunfo/game/entity"
+	"github.com/cidstein/super-brunfo/game/infra/database"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/suite"
 )
 
-type MatchRepositoryTestSuite struct {
+type PlayGameTestSuite struct {
 	ctx context.Context
 	suite.Suite
 	Db *pgx.Conn
 }
 
-func (suite *MatchRepositoryTestSuite) SetupSuite() {
+func (suite *PlayGameTestSuite) SetupSuite() {
 	suite.ctx = context.Background()
 	db, err := pgx.Connect(suite.ctx, "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
 	suite.NoError(err)
 	suite.Db = db
 }
 
-func (suite *MatchRepositoryTestSuite) TearDownSuite() {
+func (suite *PlayGameTestSuite) TearDownSuite() {
 	suite.Db.Close(suite.ctx)
 }
 
-func (suite *MatchRepositoryTestSuite) TestGivenAnMatch_WhenSave_ThenShouldSaveMatch() {
+func (suite *PlayGameTestSuite) TestGivenMatch_WhenCreateNewMatch_ShouldReceiveError() {
+	pguc := PlayGameUseCase{}
+	pguc.CardRepository = database.NewCardRepository(suite.Db)
+	pguc.DeckRepository = database.NewDeckRepository(suite.Db)
+	pguc.MatchRepository = database.NewMatchRepository(suite.Db)
+	pguc.RoundRepository = database.NewRoundRepository(suite.Db)
+
 	matchID := uuid.New().String()
 
-	cardRepo := NewCardRepository(suite.Db)
-	cards, err := cardRepo.FindAll(suite.ctx)
+	cards, err := pguc.CardRepository.FindAll(suite.ctx)
 	suite.NoError(err)
-
-	deckRepo := NewDeckRepository(suite.Db)
 
 	cut := len(cards) / 2
 	pd := entity.Deck{
@@ -46,23 +50,18 @@ func (suite *MatchRepositoryTestSuite) TestGivenAnMatch_WhenSave_ThenShouldSaveM
 		Cards: cards[cut:],
 	}
 
-	playerDeck, err := deckRepo.Save(suite.ctx, pd)
+	playerDeck, err := pguc.DeckRepository.Save(suite.ctx, pd)
 	suite.NoError(err)
 
-	npcDeck, err := deckRepo.Save(suite.ctx, nd)
+	npcDeck, err := pguc.DeckRepository.Save(suite.ctx, nd)
 	suite.NoError(err)
 
 	match := entity.NewMatch(matchID, playerDeck.ID, npcDeck.ID, false, false)
 	suite.NoError(match.IsValid())
-	matchRepo := NewMatchRepository(suite.Db)
 
-	err = matchRepo.Save(suite.ctx, match)
+	err = pguc.MatchRepository.Save(suite.ctx, match)
 	suite.NoError(err)
 
-	m, err := matchRepo.FindByID(suite.ctx, match.ID)
-	suite.NoError(err)
-	suite.Equal(match.ID, m.ID)
-
-	err = matchRepo.Delete(suite.ctx, match.ID)
+	_, err = pguc.Play(suite.ctx, suite.Db, matchID, "attack")
 	suite.NoError(err)
 }
