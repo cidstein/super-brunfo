@@ -2,10 +2,13 @@ package database
 
 import (
 	"context"
+	"fmt"
+	"os"
 
 	"github.com/cidstein/super-brunfo/game/entity"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -16,8 +19,22 @@ type CardRepositoryTestSuite struct {
 }
 
 func (suite *CardRepositoryTestSuite) SetupSuite() {
+	err := godotenv.Load("../../../.env")
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		panic(err)
+	}
+
+	conn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	)
+
 	suite.ctx = context.Background()
-	db, err := pgx.Connect(suite.ctx, "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+	db, err := pgx.Connect(suite.ctx, conn)
 	suite.NoError(err)
 	suite.Db = db
 }

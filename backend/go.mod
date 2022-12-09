@@ -6,6 +6,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v5 v5.1.1
+	github.com/joho/godotenv v1.3.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
 )

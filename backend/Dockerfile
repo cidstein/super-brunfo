@@ -39,8 +39,3 @@ RUN cd /go \
     && mv /go/bin/godotenv /app/bin
 
 WORKDIR /app
-
-# WORKDIR /go/src
-# ENV PATH="/go/bin:${PATH}"
-
-# CMD ["tail", "-f", "/dev/null"]
