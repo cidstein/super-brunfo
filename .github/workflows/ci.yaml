@@ -1,11 +1,46 @@
 name: ci-workflow
+
 on:
   push:
     branches:
       - main
+
+env:
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_NAME: db
+
 jobs:
-  check-application:
+  deploy-dev:
     runs-on: ubuntu-latest
+    env:
+      name: dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      - run: cd backend && go test -v ./...
+
+  deploy-stg:
+    runs-on: ubuntu-latest
+    env:
+      name: stg
+    needs: deploy-dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      - run: cd backend && go test -v ./...
+
+  deploy-prd:
+    runs-on: ubuntu-latest
+    env:
+      name: prd
+    needs: deploy-stg
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
