@@ -18,7 +18,7 @@ type StartMatchTestSuite struct {
 }
 
 func (suite *StartMatchTestSuite) SetupSuite() {
-	err := godotenv.Load("../../.env")
+	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Error loading .env file")
 		panic(err)

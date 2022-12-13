@@ -18,6 +18,10 @@ jobs:
     env:
       name: dev
     steps:
+      - name: 'Create .env file'
+        run: |
+          touch backend/game/infra/database/.env |
+          touch backend/game/usecases/.env
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
@@ -30,6 +34,10 @@ jobs:
       name: stg
     needs: deploy-dev
     steps:
+      - name: 'Create .env file'
+        run: |
+          touch backend/game/infra/database/.env |
+          touch backend/game/usecases/.env
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
@@ -42,6 +50,10 @@ jobs:
       name: prd
     needs: deploy-stg
     steps:
+      - name: 'Create .env file'
+        run: |
+          touch backend/game/infra/database/.env |
+          touch backend/game/usecases/.env
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
