@@ -20,12 +20,37 @@ func main() {
 
 	ctx := context.Background()
 
+	dbUser, ok := os.LookupEnv("DB_USER")
+	if !ok {
+		fmt.Println("Error loading DB_USER")
+	}
+
+	dbPass, ok := os.LookupEnv("DB_PASSWORD")
+	if !ok {
+		fmt.Println("Error loading DB_PASSWORD")
+	}
+
+	dbHost, ok := os.LookupEnv("DB_HOST")
+	if !ok {
+		fmt.Println("Error loading DB_HOST")
+	}
+
+	dbPort, ok := os.LookupEnv("DB_PORT")
+	if !ok {
+		fmt.Println("Error loading DB_PORT")
+	}
+
+	dbName, ok := os.LookupEnv("DB_NAME")
+	if !ok {
+		fmt.Println("Error loading DB_NAME")
+	}
+
 	conn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
+		dbUser,
+		dbPass,
+		dbHost,
+		dbPort,
+		dbName,
 	)
 
 	fmt.Println(conn)

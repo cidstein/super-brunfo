@@ -25,12 +25,27 @@ func (suite *RoundRepositoryTestSuite) SetupSuite() {
 		panic(err)
 	}
 
+	dbUser, ok := os.LookupEnv("DB_USER")
+	suite.True(ok)
+
+	dbPass, ok := os.LookupEnv("DB_PASSWORD")
+	suite.True(ok)
+
+	dbHost, ok := os.LookupEnv("DB_HOST")
+	suite.True(ok)
+
+	dbPort, ok := os.LookupEnv("DB_PORT")
+	suite.True(ok)
+
+	dbName, ok := os.LookupEnv("DB_NAME")
+	suite.True(ok)
+
 	conn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
+		dbUser,
+		dbPass,
+		dbHost,
+		dbPort,
+		dbName,
 	)
 
 	suite.ctx = context.Background()
