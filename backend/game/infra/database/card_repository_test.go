@@ -19,39 +19,17 @@ type CardRepositoryTestSuite struct {
 }
 
 func (suite *CardRepositoryTestSuite) SetupSuite() {
+	suite.ctx = context.Background()
+
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Error loading .env file")
 		panic(err)
 	}
 
-	// dbUser, ok := os.LookupEnv("DB_USER")
-	// suite.True(ok)
-
-	// dbPass, ok := os.LookupEnv("DB_PASSWORD")
-	// suite.True(ok)
-
-	// dbHost, ok := os.LookupEnv("DB_HOST")
-	// suite.True(ok)
-
-	// dbPort, ok := os.LookupEnv("DB_PORT")
-	// suite.True(ok)
-
-	// dbName, ok := os.LookupEnv("DB_NAME")
-	// suite.True(ok)
-
 	dbUrl := os.Getenv("DB_URL")
 	suite.NotEmpty(dbUrl)
 
-	// conn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-	// 	dbUser,
-	// 	dbPass,
-	// 	dbHost,
-	// 	dbPort,
-	// 	dbName,
-	// )
-
-	suite.ctx = context.Background()
 	db, err := pgx.Connect(suite.ctx, dbUrl)
 	suite.NoError(err)
 	suite.Db = db

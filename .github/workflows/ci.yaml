@@ -42,7 +42,7 @@ jobs:
           go-version: 1.19
 
       - name: Run docker-compose
-        run: cd backend && docker-compose up -d
+        run: cd backend && docker-compose up -d --build
 
       - name: Create .env file
         run: echo "${{secrets.ENV_FILE }}" > backend/game/infra/database/.env |
