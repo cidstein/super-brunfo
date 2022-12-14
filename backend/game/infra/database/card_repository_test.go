@@ -40,8 +40,8 @@ func (suite *CardRepositoryTestSuite) SetupSuite() {
 	// dbName, ok := os.LookupEnv("DB_NAME")
 	// suite.True(ok)
 
-	dbUrl, ok := os.LookupEnv("DB_URL")
-	suite.True(ok)
+	dbUrl := os.Getenv("DB_URL")
+	suite.NotEmpty(dbUrl)
 
 	// conn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
 	// 	dbUser,
