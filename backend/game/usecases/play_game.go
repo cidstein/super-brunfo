@@ -11,15 +11,6 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type RoundOutputDTO struct {
-	ID         string
-	Match      MatchOutputDTO
-	PlayerCard CardOutputDTO
-	NpcCard    CardOutputDTO
-	Victory    bool
-	Attribute  string
-}
-
 type PlayGameUseCase struct {
 	CardRepository  entity.CardRepositoryInterface
 	DeckRepository  entity.DeckRepositoryInterface

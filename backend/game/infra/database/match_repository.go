@@ -65,6 +65,32 @@ func (r *MatchRepository) FindByID(ctx context.Context, id string) (entity.Match
 	return match, err
 }
 
+func (r *MatchRepository) FindAll(ctx context.Context) ([]entity.Match, error) {
+	var matches []entity.Match
+
+	rows, err := r.Db.Query(
+		ctx,
+		"SELECT id, player_deck_id, npc_deck_id, victory, finished FROM match",
+	)
+
+	if err != nil {
+		return matches, err
+	}
+
+	for rows.Next() {
+		var match entity.Match
+
+		err = rows.Scan(&match.ID, &match.PlayerDeckID, &match.NpcDeckID, &match.Victory, &match.Finished)
+		if err != nil {
+			return matches, err
+		}
+
+		matches = append(matches, match)
+	}
+
+	return matches, nil
+}
+
 func (r *MatchRepository) ComputeWinner(ctx context.Context, match entity.Match) (entity.Match, error) {
 	var rounds, roundWons int
 

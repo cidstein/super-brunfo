@@ -20,6 +20,7 @@ type MatchRepositoryInterface interface {
 	Save(ctx context.Context, match Match) error
 	Update(ctx context.Context, match Match) error
 	FindByID(ctx context.Context, id string) (Match, error)
+	FindAll(ctx context.Context) ([]Match, error)
 	ComputeWinner(ctx context.Context, match Match) (Match, error)
 }
 

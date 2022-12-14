@@ -10,29 +10,6 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type CardOutputDTO struct {
-	ID           string
-	Name         string
-	Attack       int
-	Defense      int
-	Intelligence int
-	Agility      int
-	Resilience   int
-}
-
-type DeckOutputDTO struct {
-	ID    string
-	Cards []CardOutputDTO
-}
-
-type MatchOutputDTO struct {
-	ID         string
-	PlayerDeck DeckOutputDTO
-	NpcDeck    DeckOutputDTO
-	Victory    bool
-	Finished   bool
-}
-
 type StartMatchUseCase struct {
 	CardRepository  entity.CardRepositoryInterface
 	DeckRepository  entity.DeckRepositoryInterface
