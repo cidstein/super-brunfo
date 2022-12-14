@@ -33,6 +33,11 @@ func (suite *PlayGameTestSuite) SetupSuite() {
 
 	db, err := pgx.Connect(suite.ctx, dbUrl)
 	suite.NoError(err)
+	if err != nil {
+		fmt.Println("Error connecting to database")
+		panic(err)
+	}
+
 	suite.Db = db
 }
 
