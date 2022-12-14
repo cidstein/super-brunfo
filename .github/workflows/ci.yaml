@@ -17,17 +17,21 @@ jobs:
       DB_NAME: superbrunfo
       DB_URL: ${{ secrets.DB_URL }}
     steps:
-      - name: Add public IP to AWS security group
-        uses: sohelamin/aws-security-group-add-ip-action@master
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'sa-east-1'
-          aws-security-group-id: ${{ secrets.AWS_SECURITY_GROUP_ID }}
-          port: '22'
-          to-port: '30'
-          protocol: 'tcp'
-          description: 'GitHub Action'
+      - name: Get Github action IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+      - name: Setting environment variables..
+        run: |
+          echo "AWS_DEFAULT_REGION=sa-east-1" >> $GITHUB_ENV
+          echo "AWS_SG_NAME=default" >> $GITHUB_ENV
+          
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
 
       - name: Check out code
         uses: actions/checkout@v3
@@ -46,6 +50,15 @@ jobs:
       
       - name: Run tests
         run: cd backend && go test -v ./...
+
+      - name: Remove Github Actions IP from security group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
+        if: always()
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
