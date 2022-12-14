@@ -7,7 +7,7 @@ ARG USER_UID=1000
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get -y upgrade \
-    && DEBIAN_FRONTEND=noninteractive apt-get install \
+    && DEBIAN_FRONTEND=noninteractive apt-get -y install \
     curl \
     locales \
     postgresql-client \
@@ -21,12 +21,19 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
 RUN groupadd --non-unique --gid $USER_GID app \
     && useradd --non-unique --shell /bin/bash --gid app --uid $USER_UID --home-dir /app app
 
+# Create the app directories.
+RUN mkdir -p \
+    /app/bin \
+    /app/etc \
+    /app/src \
+    /app/storage
+
 # Set ownership of files to the app user and set default permissions.
 RUN find /app /go | xargs chown $USER_UID:$USER_GID
-RUN find /app /go -type f | xargs chmod 0640
-RUN find /app /go -type d | xargs chmod 0750
+# RUN find /app /go -type f | xargs chmod 0640
+# RUN find /app /go -type d | xargs chmod 0750
 
-RUN chmod gu+x /app/*-entrypoint.sh
+# RUN chmod gu+x /app/*-entrypoint.sh
 
 USER app
 

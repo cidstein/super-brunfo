@@ -4,11 +4,6 @@ services:
   app:
     build: .
     container_name: backend
-    environment:
-      PGHOST: 'db'
-      PGDATABASE: 'db'
-      PGUSER: 'postgres'
-      PGPASSWORD: 'postgres'
     volumes:
       - .:/go/src/
     networks:
@@ -26,6 +21,21 @@ services:
       POSTGRES_DB: db
     ports:
       - '5432:5432'
+    networks:
+      - postgres
+    volumes: 
+      - db:/var/lib/postgresql/data
+
+  db-stg:
+    image: postgres:14.1
+    restart: always
+    container_name: db-stg
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db
+    ports:
+      - '5433:5432'
     networks:
       - postgres
     volumes: 
