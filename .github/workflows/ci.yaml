@@ -46,7 +46,7 @@ jobs:
 
       - name: Create .env file
         run: echo "${{secrets.ENV_FILE }}" > backend/internal/infra/database/.env |
-             echo "${{secrets.ENV_FILE }}" > backend/internal/usecases/.env
+             echo "${{secrets.ENV_FILE }}" > backend/internal/service/.env
       
       - name: Run tests
         run: cd backend && go test -v ./...
@@ -68,7 +68,7 @@ jobs:
 #       - name: 'Create .env file'
 #         run: |
 #           touch backend/internal/infra/database/.env |
-#           touch backend/internal/usecases/.env
+#           touch backend/internal/service/.env
 #       - uses: actions/checkout@v2
 #       - uses: actions/setup-go@v2
 #         with:
@@ -84,7 +84,7 @@ jobs:
 #       - name: 'Create .env file'
 #         run: |
 #           touch backend/internal/infra/database/.env |
-#           touch backend/internal/usecases/.env
+#           touch backend/internal/service/.env
 #       - uses: actions/checkout@v2
 #       - uses: actions/setup-go@v2
 #         with:
