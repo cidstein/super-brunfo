@@ -8,6 +8,7 @@ import (
 	"github.com/cidstein/super-brunfo/game/infra/database"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/rs/zerolog/log"
 )
 
 type StartMatchUseCase struct {
@@ -42,11 +43,17 @@ func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutpu
 
 	cut := len(cards) / 2
 
-	pd := entity.NewDeck(uuid.New().String(), cards[:cut])
-	nd := entity.NewDeck(uuid.New().String(), cards[cut:])
+	pdID := uuid.New().String()
+	pd := entity.NewDeck(pdID, cards[:cut])
+
+	ndID := uuid.New().String()
+	nd := entity.NewDeck(ndID, cards[cut:])
 
 	pd.Shuffle()
 	nd.Shuffle()
+
+	log.Info().Msgf("Player deck: %s, %v", pd.ID, pd.Cards)
+	log.Info().Msgf("NPC deck: %s, %v", pd.ID, nd.Cards)
 
 	cardsPlayer := cardsDTO(pd.Cards)
 	cardsNpc := cardsDTO(nd.Cards)
