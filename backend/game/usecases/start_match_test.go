@@ -43,7 +43,7 @@ func (suite *StartMatchTestSuite) TearDownSuite() {
 	suite.Db.Close(suite.ctx)
 }
 
-func (suite *StartMatchTestSuite) TestGivenMatch_WhenCreateNewMatch_ShouldReceiveError() {
+func (suite *StartMatchTestSuite) TestGivenMatch_WhenCreateNewMatch_ShouldStart() {
 	smuc := StartMatchUseCase{}
 	smuc.CardRepository = database.NewCardRepository(suite.Db)
 	smuc.DeckRepository = database.NewDeckRepository(suite.Db)
