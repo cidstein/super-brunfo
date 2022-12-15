@@ -4,6 +4,8 @@ services:
   app:
     build: .
     container_name: backend
+    environment:
+      - DB_URL=postgres://postgres:postgres@localhost:5432/postgres
     volumes:
       - .:/go/src/
     networks:

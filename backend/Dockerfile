@@ -28,10 +28,13 @@ RUN mkdir -p \
     /app/src \
     /app/storage
 
+# Copy entrypoints.
+# COPY *-entrypoint.sh /app/
+
 # Set ownership of files to the app user and set default permissions.
 RUN find /app /go | xargs chown $USER_UID:$USER_GID
 # RUN find /app /go -type f | xargs chmod 0640
-# RUN find /app /go -type d | xargs chmod 0750
+RUN find /app /go -type d | xargs chmod 0750
 
 # RUN chmod gu+x /app/*-entrypoint.sh
 
