@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/cidstein/super-brunfo/game/handlers"
+	"github.com/cidstein/super-brunfo/internal/api"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 )
@@ -27,9 +27,9 @@ func main() {
 		panic(err)
 	}
 
-	http.HandleFunc("/start", handlers.StartMatch(db))
-	http.HandleFunc("/play", handlers.PlayGame(db))
-	http.HandleFunc("/listcards", handlers.ListCards(db))
+	http.HandleFunc("/start", api.StartMatch(db))
+	http.HandleFunc("/play", api.PlayGame(db))
+	http.HandleFunc("/listcards", api.ListCards(db))
 
 	http.ListenAndServe(":8080", nil)
 }

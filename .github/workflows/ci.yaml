@@ -45,8 +45,8 @@ jobs:
           go-version: 1.19
 
       - name: Create .env file
-        run: echo "${{secrets.ENV_FILE }}" > backend/game/infra/database/.env |
-             echo "${{secrets.ENV_FILE }}" > backend/game/usecases/.env
+        run: echo "${{secrets.ENV_FILE }}" > backend/internal/infra/database/.env |
+             echo "${{secrets.ENV_FILE }}" > backend/internal/usecases/.env
       
       - name: Run tests
         run: cd backend && go test -v ./...
@@ -67,8 +67,8 @@ jobs:
 #     steps:
 #       - name: 'Create .env file'
 #         run: |
-#           touch backend/game/infra/database/.env |
-#           touch backend/game/usecases/.env
+#           touch backend/internal/infra/database/.env |
+#           touch backend/internal/usecases/.env
 #       - uses: actions/checkout@v2
 #       - uses: actions/setup-go@v2
 #         with:
@@ -83,8 +83,8 @@ jobs:
 #     steps:
 #       - name: 'Create .env file'
 #         run: |
-#           touch backend/game/infra/database/.env |
-#           touch backend/game/usecases/.env
+#           touch backend/internal/infra/database/.env |
+#           touch backend/internal/usecases/.env
 #       - uses: actions/checkout@v2
 #       - uses: actions/setup-go@v2
 #         with:
