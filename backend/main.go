@@ -27,6 +27,10 @@ func main() {
 		panic(err)
 	}
 
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Super Brunfo!"))
+	})
+
 	http.HandleFunc("/start", api.StartMatch(db))
 	http.HandleFunc("/play", api.PlayGame(db))
 	http.HandleFunc("/listcards", api.ListCards(db))

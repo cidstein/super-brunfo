@@ -1,4 +1,4 @@
-FROM golang:1.19
+FROM golang:1.19 AS builder
 
 LABEL maintainer="Alcides Souza <alcides.braga@gmail.com>"
 
@@ -49,3 +49,12 @@ RUN cd /go \
     && mv /go/bin/godotenv /app/bin
 
 WORKDIR /app
+
+COPY . .
+
+# Build the application.
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server
+
+FROM scratch 
+COPY --from=builder /app/server /server
+ENTRYPOINT ["/server"]
