@@ -4,7 +4,13 @@ UUID:=$(shell uuidgen)
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o _cicd/dist/super-brunfo github.com/cidstein/super-brunfo
+	CGO_ENABLED=0 \
+	GOOS=linux \
+	GOARCH=amd64 \
+	go build \
+	-ldflags "-s -w -X 'github.com/cidstein/super-brunfo/conf.version=$(UUID)'" \
+	-o _cicd/dist/super-brunfo \
+	github.com/cidstein/super-brunfo
 
 .PHONY: docker/build
 docker/build: build
@@ -16,7 +22,8 @@ docker/push: docker/build
 
 .PHONY: release
 deploy: docker/push
-	aws ecs register-task-definition \
+	set -e; \
+	RegisterTaskDefinition=$$(aws ecs register-task-definition \
 		--family super-brunfo \
 		--requires-compatibilities "FARGATE" \
 		--container-definitions "[{\
@@ -53,4 +60,9 @@ deploy: docker/push
 			\"operatingSystemFamily\": \"LINUX\" \
 		}" \
 		--execution-role-arn "arn:aws:iam::006869236742:role/ecsTaskExecutionRole" \
-		--network-mode "awsvpc"
+		--network-mode "awsvpc" \
+	); \
+	aws ecs update-service \
+		--cluster super-brunfo \
+		--service super-brunfo-srv \
+		--task-definition $$(printf "$$RegisterTaskDefinition" | jq -Mcr '.taskDefinition.taskDefinitionArn')

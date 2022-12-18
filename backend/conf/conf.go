@@ -8,10 +8,13 @@ import (
 
 const EnvPrefix = "SUPER_BRUNFO"
 
+var version string
+
 type Main struct {
 	AppHost     string
 	AppPort     string
 	DatabaseUrl string
+	Version     string
 }
 
 func Get() (*Main, error) {
@@ -29,6 +32,8 @@ func Get() (*Main, error) {
 	if c.AppPort == "" {
 		c.AppPort = "8080"
 	}
+
+	c.Version = version
 
 	return c, nil
 }

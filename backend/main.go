@@ -30,8 +30,13 @@ func main() {
 		panic(err)
 	}
 
+	log.Printf("config.Version: %s", config.Version)
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Super Brunfo!"))
+	})
+	http.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(config.Version))
 	})
 	http.HandleFunc("/start", api.StartMatch(db))
 	http.HandleFunc("/play", api.PlayGame(db))
@@ -44,5 +49,4 @@ func main() {
 		fmt.Println("Error starting server")
 		panic(err)
 	}
-
 }
