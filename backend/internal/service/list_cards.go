@@ -28,6 +28,7 @@ func (s *ListCardsUseCase) ListCards(ctx context.Context, db *pgx.Conn) ([]CardO
 			Intelligence: card.Intelligence,
 			Agility:      card.Agility,
 			Resilience:   card.Resilience,
+			ImageURL:     card.ImageURL,
 		}
 	}
 

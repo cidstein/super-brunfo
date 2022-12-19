@@ -28,6 +28,7 @@ func cardsDTO(cards []model.Card) []CardOutputDTO {
 			Intelligence: cards[card].Intelligence,
 			Agility:      cards[card].Agility,
 			Resilience:   cards[card].Resilience,
+			ImageURL:     cards[card].ImageURL,
 		})
 	}
 	return cardsDTO

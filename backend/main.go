@@ -19,18 +19,17 @@ func main() {
 
 	config, err := conf.Get()
 	if err != nil {
-		fmt.Println("Error getting config")
+		fmt.Println("Error getting config, %w", err)
 		panic(err)
 	}
 
-	log.Printf("DB_URL: %s", config.DatabaseUrl)
+	log.Printf("config.Version: %s", config.Version)
+
 	db, err := pgx.Connect(ctx, config.DatabaseUrl)
 	if err != nil {
 		fmt.Println("Error connecting to database")
 		panic(err)
 	}
-
-	log.Printf("config.Version: %s", config.Version)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Super Brunfo!"))

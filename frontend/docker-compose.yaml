@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    container_name: frontend
+    command: bash -c "npm install && npm start"
+    ports: 
+      - 3000:3000
+    volumes:
+      - .:/home/node/app

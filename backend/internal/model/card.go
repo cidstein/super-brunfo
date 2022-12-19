@@ -12,9 +12,10 @@ type Card struct {
 	Intelligence int    `json:"intelligence"`
 	Agility      int    `json:"agility"`
 	Resilience   int    `json:"resilience"`
+	ImageURL     string `json:"image_url"`
 }
 
-func NewCard(id string, name string, attack int, defense int, intelligence int, agility int, resilience int) Card {
+func NewCard(id string, name string, attack int, defense int, intelligence int, agility int, resilience int, imageUrl string) Card {
 	return Card{
 		ID:           id,
 		Name:         name,
@@ -23,6 +24,7 @@ func NewCard(id string, name string, attack int, defense int, intelligence int, 
 		Intelligence: intelligence,
 		Agility:      agility,
 		Resilience:   resilience,
+		ImageURL:     imageUrl,
 	}
 }
 
@@ -53,6 +55,10 @@ func (c *Card) IsValid() error {
 
 	if c.Resilience < 0 || c.Resilience > 100 {
 		return errors.New("resilience must be between 0 and 100")
+	}
+
+	if c.ImageURL == "" {
+		return errors.New("image_url is required")
 	}
 
 	return nil

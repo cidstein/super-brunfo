@@ -27,6 +27,7 @@ func (s *GetDeckUseCase) GetDeck(ctx context.Context, deckID string) (DeckOutput
 			Intelligence: card.Intelligence,
 			Agility:      card.Agility,
 			Resilience:   card.Resilience,
+			ImageURL:     card.ImageURL,
 		}
 	}
 
