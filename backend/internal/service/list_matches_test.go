@@ -47,6 +47,6 @@ func (suite *ListMatchesTestSuite) TestGivenNothing_WhenListMatches_ShouldReceiv
 	lmuc := ListMatchesUseCase{}
 	lmuc.MatchRepository = database.NewMatchRepository(suite.Db)
 
-	_, err := lmuc.ListMatches(suite.ctx)
+	_, err := lmuc.ListMatches(suite.ctx, suite.Db)
 	suite.NoError(err)
 }

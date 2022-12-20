@@ -8,14 +8,14 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func ListCards(db *pgx.Conn) http.HandlerFunc {
+func ListMatches(db *pgx.Conn) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		enableCors(&w)
 		r.Method = http.MethodGet
 
-		lcuc := service.ListCardsUseCase{}
+		lmuc := service.ListMatchesUseCase{}
 
-		lc, err := lcuc.ListCards(r.Context(), db)
+		lc, err := lmuc.ListMatches(r.Context(), db)
 		if err != nil {
 			w.WriteHeader(http.StatusBadGateway)
 			w.Write([]byte(err.Error()))
