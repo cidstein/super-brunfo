@@ -22,6 +22,7 @@ func (s *ListMatchesUseCase) ListMatches(ctx context.Context, db *pgx.Conn) ([]M
 	for i, match := range matches {
 		matchesDTO[i] = MatchOutputDTO{
 			ID:       match.ID,
+			Counter:  match.Counter,
 			Victory:  match.Victory,
 			Finished: match.Finished,
 		}

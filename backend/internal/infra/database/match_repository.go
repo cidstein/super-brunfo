@@ -66,9 +66,9 @@ func (r *MatchRepository) FindByID(ctx context.Context, id string) (*model.Match
 
 	err := r.Db.QueryRow(
 		ctx,
-		"SELECT id, player_deck_id, npc_deck_id, victory, finished FROM match WHERE id = $1",
+		"SELECT id, player_deck_id, npc_deck_id, counter, victory, finished FROM match WHERE id = $1",
 		id,
-	).Scan(&match.ID, &match.PlayerDeckID, &match.NpcDeckID, &match.Victory, &match.Finished)
+	).Scan(&match.ID, &match.PlayerDeckID, &match.NpcDeckID, &match.Counter, &match.Victory, &match.Finished)
 
 	return &match, err
 }
@@ -78,7 +78,7 @@ func (r *MatchRepository) FindAll(ctx context.Context) ([]model.Match, error) {
 
 	rows, err := r.Db.Query(
 		ctx,
-		"SELECT id, player_deck_id, npc_deck_id, victory, finished FROM match",
+		"SELECT id, player_deck_id, npc_deck_id, counter, victory, finished FROM match",
 	)
 
 	if err != nil {
@@ -88,7 +88,7 @@ func (r *MatchRepository) FindAll(ctx context.Context) ([]model.Match, error) {
 	for rows.Next() {
 		var match model.Match
 
-		err = rows.Scan(&match.ID, &match.PlayerDeckID, &match.NpcDeckID, &match.Victory, &match.Finished)
+		err = rows.Scan(&match.ID, &match.PlayerDeckID, &match.NpcDeckID, &match.Counter, &match.Victory, &match.Finished)
 		if err != nil {
 			return matches, err
 		}

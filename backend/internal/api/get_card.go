@@ -8,16 +8,16 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func PlayGame(db *pgx.Conn) http.HandlerFunc {
+func GetCard(db *pgx.Conn) http.HandlerFunc {
 	type request struct {
-		MatchID   string `json:"match_id" validate:"required"`
-		Attribute string `json:"attribute" validate:"required"`
+		CardID string `json:"card_id" validate:"required"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		r.Method = http.MethodPost
+		enableCors(&w)
+		r.Method = http.MethodGet
 
-		pguc := service.PlayGameUseCase{}
+		gcuc := service.GetCardUseCase{}
 
 		var req request
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -26,28 +26,21 @@ func PlayGame(db *pgx.Conn) http.HandlerFunc {
 			return
 		}
 
-		matchID := req.MatchID
-		if matchID == "" {
+		cardID := req.CardID
+		if cardID == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("match_id is required"))
+			w.Write([]byte("card_id is required"))
 			return
 		}
 
-		attribute := req.Attribute
-		if attribute == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("attribute is required"))
-			return
-		}
-
-		pg, err := pguc.Play(r.Context(), db, matchID, attribute)
+		lc, err := gcuc.GetCard(r.Context(), db, cardID)
 		if err != nil {
 			w.WriteHeader(http.StatusBadGateway)
 			w.Write([]byte(err.Error()))
 			return
 		}
 
-		res, err := json.Marshal(pg)
+		res, err := json.Marshal(lc)
 		if err != nil {
 			w.WriteHeader(http.StatusBadGateway)
 			w.Write([]byte(err.Error()))

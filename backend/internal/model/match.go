@@ -6,6 +6,7 @@ type Match struct {
 	ID           string `json:"id"`
 	PlayerDeckID string `json:"playerDeckID"`
 	NpcDeckID    string `json:"npcDeckID"`
+	Counter      int    `json:"counter"`
 	Victory      bool   `json:"victory"`
 	Finished     bool   `json:"finished"`
 }

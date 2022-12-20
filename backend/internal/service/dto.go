@@ -20,6 +20,7 @@ type MatchOutputDTO struct {
 	ID         string
 	PlayerDeck DeckOutputDTO
 	NpcDeck    DeckOutputDTO
+	Counter    int
 	Victory    bool
 	Finished   bool
 }
@@ -29,6 +30,7 @@ type RoundOutputDTO struct {
 	Match      MatchOutputDTO
 	PlayerCard CardOutputDTO
 	NpcCard    CardOutputDTO
+	Counter    int
 	Victory    bool
 	Attribute  string
 }

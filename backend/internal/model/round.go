@@ -7,6 +7,7 @@ type Round struct {
 	MatchID      string `json:"matchID"`
 	PlayerCardID string `json:"playerCardID"`
 	NpcCardID    string `json:"npcCardID"`
+	Counter      int    `json:"counter"`
 	Victory      bool   `json:"victory"`
 	Attribute    string `json:"attribute"`
 }
