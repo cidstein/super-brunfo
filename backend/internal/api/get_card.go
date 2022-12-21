@@ -9,27 +9,16 @@ import (
 )
 
 func GetCard(db *pgx.Conn) http.HandlerFunc {
-	type request struct {
-		CardID string `json:"card_id" validate:"required"`
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		enableCors(&w)
 		r.Method = http.MethodGet
 
 		gcuc := service.GetCardUseCase{}
 
-		var req request
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(err.Error()))
-			return
-		}
-
-		cardID := req.CardID
+		cardID := r.URL.Query().Get("id")
 		if cardID == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("card_id is required"))
+			w.Write([]byte("id is required"))
 			return
 		}
 

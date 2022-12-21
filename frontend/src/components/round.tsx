@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Grid, makeStyles } from "@material-ui/core";
 
 import ActionAreaCard from './card';
+import { useEffect } from 'react';
 
 interface RoundProps {
   id: string;
@@ -32,23 +33,23 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ActionAreaMatch(props: RoundProps) {
+export default function Round(props: RoundProps) {
   const classes = useStyles();
+  const [matchId, setMatchId] = React.useState<string>("");
+  const [roundId, setRoundId] = React.useState<string>("");
+  const [npcCardId, setNpcCardId] = React.useState<string>("");
   const [playerCard, setPlayerCard] = React.useState<any>([]);
   const [npcCard, setNpcCard] = React.useState<any>([]);
-  const { id, matchId, playerCardId, npcCardId, counter, victory, finished } = props;
+  const { playerCardId, counter, victory, finished } = props;
 
-  React.useEffect(() => {
-    fetch('http://localhost:8080/getcard', {
+  useEffect(() => {
+    fetch(`http://localhost:8080/getcard?id=${playerCardId}`, {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
       method: 'GET',
-      body: JSON.stringify({
-        card_id: playerCardId,
-      })
     })
        .then((response) => response.json())
        .then((data) => {
@@ -59,30 +60,30 @@ export default function ActionAreaMatch(props: RoundProps) {
        });
   }, []);
 
-  React.useEffect(() => {
-    fetch('http://localhost:8080/getcard', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      method: 'GET',
-      body: JSON.stringify({
-        card_id: npcCardId,
-      })
-    })
-       .then((response) => response.json())
-       .then((data) => {
-        setNpcCard(data);
-       })
-       .catch((err) => {
-          console.log(err.message);
-       });
-  }, []);
+  // useEffect(() => {
+  //   fetch('http://localhost:8080/getcard', {
+  //     headers: {
+  //       'Access-Control-Allow-Origin': '*',
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json'
+  //     },
+  //     method: 'GET',
+  //     body: JSON.stringify({
+  //       card_id: npcCardId,
+  //     })
+  //   })
+  //      .then((response) => response.json())
+  //      .then((data) => {
+  //       setNpcCard(data);
+  //      })
+  //      .catch((err) => {
+  //         console.log(err.message);
+  //      });
+  // }, []);
   
   return (
     <Grid className={classes.root} container>
-      <Grid item xs={12} sm={3}>
+      <Grid item xs={6}>
         <ActionAreaCard  
           name={playerCard.Name}
           attack={playerCard.Attack}
@@ -93,17 +94,17 @@ export default function ActionAreaMatch(props: RoundProps) {
           imageURL={playerCard.ImageURL}
         />
       </Grid>
-      <Grid item xs={12} sm={3}>
+      {/* <Grid item xs={6}>
         <ActionAreaCard  
-          name={playerCard.Name}
-          attack={playerCard.Attack}
-          defense={playerCard.Defense}
-          intelligence={playerCard.Intelligence}
-          agility={playerCard.Agility}
-          resilience={playerCard.Resilience}
-          imageURL={playerCard.ImageURL}
+          name={npcCard.Name}
+          attack={npcCard.Attack}
+          defense={npcCard.Defense}
+          intelligence={npcCard.Intelligence}
+          agility={npcCard.Agility}
+          resilience={npcCard.Resilience}
+          imageURL={npcCard.ImageURL}
         />
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }

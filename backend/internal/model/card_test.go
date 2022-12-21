@@ -46,7 +46,15 @@ func TestGivenAValidCard_WhenCreateNewCard_ShouldReceiveNoError(t *testing.T) {
 	assert.NoError(t, card.IsValid())
 }
 
-func TestGivenAInvalidCard_WhenCallCombat_ShouldReceiveAnError(t *testing.T) {
+func TestGivenAInvalidPlayerCard_WhenCallCombat_ShouldReceiveAnError(t *testing.T) {
+	card1 := NewCard("1", "name1", -10, 0, 0, 0, 0, "")
+	card2 := NewCard("2", "name2", 0, 0, 0, 0, 0, "")
+
+	_, err := card1.Combat(&card2, "attack")
+	assert.Error(t, err)
+}
+
+func TestGivenAInvalidNpcCard_WhenCallCombat_ShouldReceiveAnError(t *testing.T) {
 	card1 := NewCard("1", "name1", 0, 0, 0, 0, 0, "")
 	card2 := NewCard("2", "name2", -10, 0, 0, 0, 0, "")
 
@@ -62,7 +70,7 @@ func TestGivenAInvalidAttribute_WhenCallCombat_ShouldReceiveAnError(t *testing.T
 	assert.Error(t, err)
 }
 
-func TestGivenAValidCard_WhenCallCombat_ShouldReceiveCard1AsWinner(t *testing.T) {
+func TestGivenAValidCardWithHigherAttack_WhenCallCombat_ShouldReceiveCard1AsWinner(t *testing.T) {
 	card1 := NewCard("1", "name1", 10, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
 	card2 := NewCard("2", "name2", 0, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
 
@@ -70,11 +78,55 @@ func TestGivenAValidCard_WhenCallCombat_ShouldReceiveCard1AsWinner(t *testing.T)
 	assert.NoError(t, err)
 	assert.Equal(t, true, winner)
 }
-func TestGivenAValidCard_WhenCallCombat_ShouldReceiveCard2AsWinner(t *testing.T) {
-	card1 := NewCard("1", "name1", 0, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
-	card2 := NewCard("2", "name2", 10, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
 
-	winner, err := card1.Combat(&card2, "attack")
+func TestGivenAValidCardWithHigherDefense_WhenCallCombat_ShouldReceiveCard1AsWinner(t *testing.T) {
+	card1 := NewCard("1", "name1", 0, 10, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
+	card2 := NewCard("2", "name2", 0, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
+
+	winner, err := card1.Combat(&card2, "defense")
 	assert.NoError(t, err)
-	assert.Equal(t, false, winner)
+	assert.Equal(t, true, winner)
+}
+
+func TestGivenAValidCardWithHigherIntelligence_WhenCallCombat_ShouldReceiveCard1AsWinner(t *testing.T) {
+	card1 := NewCard("1", "name1", 0, 0, 10, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
+	card2 := NewCard("2", "name2", 0, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
+
+	winner, err := card1.Combat(&card2, "intelligence")
+	assert.NoError(t, err)
+	assert.Equal(t, true, winner)
+}
+
+func TestGivenAValidCardWithHigherAgility_WhenCallCombat_ShouldReceiveCard1AsWinner(t *testing.T) {
+	card1 := NewCard("1", "name1", 0, 0, 0, 10, 0, "https://i.imgur.com/PsF78Ls.jpg")
+	card2 := NewCard("2", "name2", 0, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
+
+	winner, err := card1.Combat(&card2, "agility")
+	assert.NoError(t, err)
+	assert.Equal(t, true, winner)
+}
+
+func TestGivenAValidCardWithHigherResilience_WhenCallCombat_ShouldReceiveCard1AsWinner(t *testing.T) {
+	card1 := NewCard("1", "name1", 0, 0, 0, 0, 10, "https://i.imgur.com/PsF78Ls.jpg")
+	card2 := NewCard("2", "name2", 0, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
+
+	winner, err := card1.Combat(&card2, "resilience")
+	assert.NoError(t, err)
+	assert.Equal(t, true, winner)
+}
+
+func TestGivenAValidCardWithInvalidAttribute_WhenCallCombat_ShouldReceiveCard1AsWinner(t *testing.T) {
+	card1 := NewCard("1", "name1", 0, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
+	card2 := NewCard("2", "name2", 0, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
+
+	_, err := card1.Combat(&card2, "invalid")
+	assert.Error(t, err)
+}
+
+func TestGivenAnInvalidCard_WhenCallCombat_ShouldReceiveError(t *testing.T) {
+	card1 := NewCard("1", "name1", 0, 0, 0, 0, 0, "https://i.imgur.com/PsF78Ls.jpg")
+	card2 := Card{}
+
+	_, err := card1.Combat(&card2, "attack")
+	assert.Error(t, err)
 }
