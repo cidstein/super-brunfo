@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
-import { Button, ButtonGroup, Container, Navbar } from 'react-bootstrap';
+import { Container, Row, Col, ButtonGroup, Navbar } from 'react-bootstrap';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Stack from 'react-bootstrap/Stack';
 
 import ListCards from './list-cards';
+import ListMatches from './list-matches';
   export default function Home() {
     const [loadMatches, setLoadMatches] = useState(false);
     const [loadListCard, setLoadListCard] = useState(false);
@@ -18,14 +19,16 @@ import ListCards from './list-cards';
     ];
 
     return (
-        <Stack gap={0}>
-            <Navbar bg="dark" variant="dark">
-                <Container>
-                    <Navbar.Brand href="#home">Super Brunfo</Navbar.Brand>
-                </Container>
-            </Navbar>
-            <Stack direction="horizontal" gap={2}>
-                <div className="d-flex flex-column border-right sticky-top">
+        <Container className="container">
+            <Row>
+                <Navbar bg="dark" variant="dark">
+                    <Container>
+                        <Navbar.Brand href="#home">Super Brunfo</Navbar.Brand>
+                    </Container>
+                </Navbar>
+            </Row>
+            <Row className="show-grid">
+                <Col md={2} className="border-right sticky-top">
                     <Stack gap={2}>
                         <ButtonGroup vertical size='sm'>
                             {radios.map((radio, idx) => (
@@ -59,13 +62,18 @@ import ListCards from './list-cards';
                             ))}
                         </ButtonGroup>
                     </Stack>
-                </div>
-                <div className="bg-light border">
-                    { loadMatches && <div>Matches</div>}
-                    { loadListCard && <ListCards />}
-                    { loadStatistics && <div>Statistics</div>}
-                </div>
-            </Stack>
-        </Stack>
+                </Col>
+                <Col md={10}>
+                    {loadMatches && <ListMatches />}
+                    {loadListCard && <ListCards />}
+                    {/* {loadStatistics && <Statistics />} */}
+                </Col>
+            </Row>
+        </Container>
+
+
+
+
+
     )
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
-import Grid from "@mui/material/Grid";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 import ActionAreaCard from "./card";
 
@@ -25,22 +27,23 @@ export default function ListCards() {
            });
       }, []);
 
-    return (
-        <Grid container spacing={{ xs: 3, md: 2 }} columns={{ xs: 6, sm: 10, md: 30 }}>
-        {cards.map((card, index) => (
-          <Grid item xs={2} sm={3} md={3} key={index}>
-            <ActionAreaCard  
-              name={card.Name}
-              attack={card.Attack}
-              defense={card.Defense}
-              intelligence={card.Intelligence}
-              agility={card.Agility}
-              resilience={card.Resilience}
-              imageURL={card.ImageURL}
-            />
-          </Grid>
-        ))}
-      </Grid>
+        return (
+      <Container>
+        <Row>
+          {cards.map((card, index) => (
+            <Col xxl={3} key={index}>
+              <ActionAreaCard  
+                name={card.Name}
+                attack={card.Attack}
+                defense={card.Defense}
+                intelligence={card.Intelligence}
+                agility={card.Agility}
+                resilience={card.Resilience}
+                imageURL={card.ImageURL}
+              />
+            </Col>
+          ))}
+        </Row>
+      </Container>
     );
 }
-    
