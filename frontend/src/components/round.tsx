@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { Grid, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
+import Grid from '@mui/material/Grid';
 
 import ActionAreaCard from './card';
 import { useEffect } from 'react';
@@ -19,6 +20,10 @@ const useStyles = makeStyles({
   root: {
     width: "100%",
     height: "100%",
+    backgroundImage: "url(https://i.imgur.com/soqaKsR.jpg)",
+    backGroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+
   },
   form: {
     margin: "16px",
@@ -35,12 +40,9 @@ const useStyles = makeStyles({
 
 export default function Round(props: RoundProps) {
   const classes = useStyles();
-  const [matchId, setMatchId] = React.useState<string>("");
-  const [roundId, setRoundId] = React.useState<string>("");
-  const [npcCardId, setNpcCardId] = React.useState<string>("");
   const [playerCard, setPlayerCard] = React.useState<any>([]);
   const [npcCard, setNpcCard] = React.useState<any>([]);
-  const { playerCardId, counter, victory, finished } = props;
+  const { playerCardId, npcCardId, counter, victory, finished } = props;
 
   useEffect(() => {
     fetch(`http://localhost:8080/getcard?id=${playerCardId}`, {
@@ -58,19 +60,32 @@ export default function Round(props: RoundProps) {
        .catch((err) => {
           console.log(err.message);
        });
-  }, []);
+
+    // fetch(`http://localhost:8080/getcard?id=${npcCardId}`, {
+    //   headers: {
+    //     'Access-Control-Allow-Origin': '*',
+    //     'Content-Type': 'application/json',
+    //     'Accept': 'application/json'
+    //   },
+    //   method: 'GET',
+    // })
+    //    .then((response) => response.json())
+    //    .then((data) => {
+    //     setNpcCard(data);
+    //    })
+    //    .catch((err) => {
+    //       console.log(err.message);
+    //    });
+  }, [playerCardId, npcCardId]);
 
   // useEffect(() => {
-  //   fetch('http://localhost:8080/getcard', {
+  //   fetch(`http://localhost:8080/getcard?id=${npcCardId}`, {
   //     headers: {
   //       'Access-Control-Allow-Origin': '*',
   //       'Content-Type': 'application/json',
   //       'Accept': 'application/json'
   //     },
   //     method: 'GET',
-  //     body: JSON.stringify({
-  //       card_id: npcCardId,
-  //     })
   //   })
   //      .then((response) => response.json())
   //      .then((data) => {
@@ -82,8 +97,8 @@ export default function Round(props: RoundProps) {
   // }, []);
   
   return (
-    <Grid className={classes.root} container>
-      <Grid item xs={6}>
+    <Grid className={classes.root} container >
+      <Grid item xs={6} >
         <ActionAreaCard  
           name={playerCard.Name}
           attack={playerCard.Attack}
@@ -94,7 +109,7 @@ export default function Round(props: RoundProps) {
           imageURL={playerCard.ImageURL}
         />
       </Grid>
-      {/* <Grid item xs={6}>
+      <Grid item xs={6} >
         <ActionAreaCard  
           name={npcCard.Name}
           attack={npcCard.Attack}
@@ -104,7 +119,7 @@ export default function Round(props: RoundProps) {
           resilience={npcCard.Resilience}
           imageURL={npcCard.ImageURL}
         />
-      </Grid> */}
+      </Grid>
     </Grid>
   );
 }

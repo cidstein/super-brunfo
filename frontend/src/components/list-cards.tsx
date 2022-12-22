@@ -26,7 +26,7 @@ export default function ListCards() {
       }, []);
 
     return (
-        <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 5, sm: 10, md: 15 }}>
+        <Grid container spacing={{ xs: 3, md: 2 }} columns={{ xs: 6, sm: 10, md: 30 }}>
         {cards.map((card, index) => (
           <Grid item xs={2} sm={3} md={3} key={index}>
             <ActionAreaCard  

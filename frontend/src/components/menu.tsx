@@ -22,9 +22,6 @@ export default function MenuBar() {
                 value={''}
                 label="Age"
                 title="teste"
-                
-
-                
             >
                 <MenuItem value="1">
                     <em>Partidas</em>

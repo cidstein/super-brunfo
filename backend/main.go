@@ -43,7 +43,7 @@ func main() {
 	http.HandleFunc("/play", api.PlayGame(db))
 	http.HandleFunc("/listcards", api.ListCards(db))
 	http.HandleFunc("/listmatches", api.ListMatches(db))
-	http.HandleFunc("/getcard", api.GetCard(db))
+	go http.HandleFunc("/getcard", api.GetCard(db))
 
 	address := fmt.Sprintf("%s:%s", config.AppHost, config.AppPort)
 	log.Printf("Listening on %s", address)

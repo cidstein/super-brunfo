@@ -4,11 +4,12 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
+import { CardActionArea, createTheme } from '@mui/material';
 import { experimentalStyled as styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import { alignProperty } from '@mui/material/styles/cssUtils';
 
 interface CardProps {
   name: string;
@@ -31,8 +32,20 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function ActionAreaCard(props: CardProps) {
   const { name, attack, defense, intelligence, agility, resilience, imageURL } = props;
   return (
-    <Card sx={{ maxWidth: 200 }}>
-      <CardActionArea>
+    <Card 
+      sx={{maxWidth: 220}}
+    >
+      <CardActionArea
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          height: '100%',
+          alignSelf: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+        }}
+      >
         <CardMedia
           component="img"
           height="140"
