@@ -29,9 +29,9 @@ export default function ListCards() {
 
         return (
       <Container>
-        <Row>
+        <Row > 
           {cards.map((card, index) => (
-            <Col xxl={3} key={index}>
+            <Col xxl={3} key={index} className="mx-auto my-2">
               <ActionAreaCard  
                 name={card.Name}
                 attack={card.Attack}

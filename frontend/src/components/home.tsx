@@ -6,6 +6,7 @@ import Stack from 'react-bootstrap/Stack';
 
 import ListCards from './list-cards';
 import ListMatches from './list-matches';
+import Round from './round';
   export default function Home() {
     const [loadMatches, setLoadMatches] = useState(false);
     const [loadListCard, setLoadListCard] = useState(false);
@@ -66,7 +67,16 @@ import ListMatches from './list-matches';
                 <Col md={10}>
                     {loadMatches && <ListMatches />}
                     {loadListCard && <ListCards />}
-                    {/* {loadStatistics && <Statistics />} */}
+                    {loadStatistics &&
+                        <Round
+                            id={'c74dd317-6a51-4dab-bd5e-72a8f28ab368'}
+                            matchId={''}
+                            playerCardId={''}
+                            npcCardId={''}
+                            counter={0}
+                            victory={false}
+                            finished={false}
+                        />}
                 </Col>
             </Row>
         </Container>

@@ -24,7 +24,6 @@ func main() {
 	}
 
 	log.Printf("config.Version: %s", config.Version)
-
 	log.Printf("config.DatabaseUrl: %s", config.DatabaseUrl)
 
 	db, err := pgx.Connect(ctx, config.DatabaseUrl)
@@ -43,7 +42,8 @@ func main() {
 	http.HandleFunc("/play", api.PlayGame(db))
 	http.HandleFunc("/listcards", api.ListCards(db))
 	http.HandleFunc("/listmatches", api.ListMatches(db))
-	go http.HandleFunc("/getcard", api.GetCard(db))
+	http.HandleFunc("/getcard", api.GetCard(db))
+	http.HandleFunc("/getroundcards", api.GetRoundCards(db))
 
 	address := fmt.Sprintf("%s:%s", config.AppHost, config.AppPort)
 	log.Printf("Listening on %s", address)

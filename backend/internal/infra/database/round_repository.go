@@ -10,6 +10,7 @@ import (
 type RoundRepositoryInterface interface {
 	Save(ctx context.Context, round model.Round) error
 	Update(ctx context.Context, round model.Round) error
+	FindCardsByID(ctx context.Context, id string) ([]model.Card, error)
 }
 
 type RoundRepository struct {
@@ -48,4 +49,85 @@ func (r *RoundRepository) Update(ctx context.Context, round model.Round) error {
 	)
 
 	return err
+}
+
+func (r *RoundRepository) FindCardsByID(ctx context.Context, id string) ([]model.Card, error) {
+	rows, err := r.Db.Query(
+		ctx,
+		`
+			select
+				s.id,
+				s.name,
+				s.attack,
+				s.defense,
+				s.intelligence,
+				s.agility,
+				s.resilience,
+				s.image_url
+			from
+			(
+				select
+					c.id,
+					c.name,
+					c.attack,
+					c.defense,
+					c.intelligence,
+					c.agility,
+					c.resilience,
+					c.image_url,
+					1 _order
+				from
+					round r
+					join card c on
+						r.player_card_id = c.id
+				where
+					r.id = $1
+				union
+				select
+					c.id,
+					c.name,
+					c.attack,
+					c.defense,
+					c.intelligence,
+					c.agility,
+					c.resilience,
+					c.image_url,
+					2 _order
+				from
+					round r
+					join card c on
+						r.npc_card_id = c.id
+				where
+					r.id = $1
+			) s
+			order by
+				s._order
+		`,
+		id,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var cards []model.Card
+	for rows.Next() {
+		var card model.Card
+		err = rows.Scan(
+			&card.ID,
+			&card.Name,
+			&card.Attack,
+			&card.Defense,
+			&card.Intelligence,
+			&card.Agility,
+			&card.Resilience,
+			&card.ImageURL,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		cards = append(cards, card)
+	}
+
+	return cards, nil
 }

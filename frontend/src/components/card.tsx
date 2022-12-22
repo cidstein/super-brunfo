@@ -16,9 +16,9 @@ interface CardProps {
 export default function ActionAreaCard(props: CardProps) {
   const { name, attack, defense, intelligence, agility, resilience, imageURL } = props;
   return (
-    <Card style={{ width: '18rem' }}>
-      <Card.Header as="h5">{name}</Card.Header>
-      <Card.Img variant="top" src={imageURL} />
+    <Card style={{ width: '15rem' }}>
+      <Card.Header as="h6">{name}</Card.Header>
+      <Card.Img src={imageURL} bsPrefix="customCardImg" />
       <ListGroup className="list-group-flush">
         <ListGroup.Item>{`Attack ${attack}`}</ListGroup.Item>
         <ListGroup.Item>{`Defense ${defense}`}</ListGroup.Item>
