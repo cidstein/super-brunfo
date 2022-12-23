@@ -14,13 +14,34 @@ interface RoundProps {
 }
 
 export default function Round(props: RoundProps) {
-  const { id, playerCardId, npcCardId, counter, victory, finished } = props;
-  const [cards, setCards] = useState<any[]>([]);
-  const [ attributeSelected, setAttributeSelected ] = useState<boolean>(false);
-  const [ attributeWon, setAttributeWon ] = useState<string>("light");
+  const { id } = props;
+  const [ round, setRound ] = useState({
+    ID: "",
+    Match: {
+      ID: "",
+      Counter: 0,
+      Finished: false,
+      Victory: false,
+    },
+    Cards: [
+      {
+        ID: "",
+        Name: "",
+        ImageURL: "",
+        Attack: 0,
+        Defense: 0,
+        Intelligence: 0,
+        Agility: 0,
+        Resilience: 0,
+      },
+    ],
+    Counter: 0,
+    Victory: false,
+    Attribute: "",
+  })
 
   useEffect(() => {
-    fetch(`http://localhost:8080/getroundcards?id=${id}`, {
+    fetch(`http://localhost:8080/loadround?match_id=${id}`, {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
@@ -30,16 +51,30 @@ export default function Round(props: RoundProps) {
     })
        .then((response) => response.json())
        .then((data) => {
-        setCards(data);
+        setRound(data);
        })
        .catch((err) => {
           console.log(err.message);
        });
-  }, [cards]);
+  }, []);
 
+  // TODO: Fix this function, problem with CORS
   function handleAttributeClick(attribute: string) {
-    setAttributeSelected(true);
-    setAttributeWon(attribute);
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ round_id: round.ID, attribute: attribute })
+
+    };
+    fetch('http://localhost:8080/playround', requestOptions)
+        .then(response => response.json())
+        .then(data => setRound(data))
+        .catch((err) => {
+          console.log(err.message);
+        });
   }
   
   return (
@@ -47,35 +82,26 @@ export default function Round(props: RoundProps) {
       <Row>
         <Col md={2} className="mx-auto my-2">
           <ListGroup className="list-group-flush">
-            <ListGroup.Item>{`Match #1`}</ListGroup.Item>
-            <ListGroup.Item>{`Round #4`}</ListGroup.Item>
-            <ListGroup.Item>{`Rounds won: 2`}</ListGroup.Item>
+            <ListGroup.Item>{`Match #${round.Match.Counter}`}</ListGroup.Item>
+            <ListGroup.Item>{`Round #${round.Counter}`}</ListGroup.Item>
+            <ListGroup.Item>{`Round: ${round.ID}`}</ListGroup.Item>
+            <ListGroup.Item>{`Victory: ${round.Victory}`}</ListGroup.Item>
+            <ListGroup.Item>{`Attribute: ${round.Attribute}`}</ListGroup.Item>
           </ListGroup>
         </Col>
-        {cards.map((card, index) => (
+        {round.Cards.map((card, index) => (
           <Col md={5} key={index} className="mx-auto my-2">
-            { (index === 0 || attributeSelected) &&
               <Card style={{ width: '15rem' }}>
               <Card.Header as="h6">{card.Name}</Card.Header>
               <Card.Img src={card.ImageURL} bsPrefix="customCardImg" />
               <ButtonGroup vertical className="list-group-flush" >
-                <Button
-                  variant={
-                    (index === 0) ? attributeWon : "danger"
-                  }
-                  onClick={() => 
-                    handleAttributeClick("success")
-                  }
-                >
-                  {`Attack ${card.Attack}`}
-                </Button>
+                <Button variant="light" onClick={() => handleAttributeClick("attack")}> {`Attack ${card.Attack}`}</Button>
                 <Button variant="light">{`Defense ${card.Defense}`}</Button>
                 <Button variant="light">{`Intelligence ${card.Intelligence}`}</Button>
                 <Button variant="light">{`Agility ${card.Agility}`}</Button>
                 <Button variant="light">{`Resilience ${card.Resilience}`}</Button>
               </ButtonGroup>
             </Card>
-            }
           </Col>
         ))}
       </Row>

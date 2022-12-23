@@ -83,7 +83,7 @@ func (suite *RoundRepositoryTestSuite) TestGivenAnRound_WhenSave_ThenShouldSaveR
 	npcCard, err := npcDeck.Draw()
 	suite.NoError(err)
 
-	round := model.NewRound(roundID, match.ID, playerCard.ID, npcCard.ID, false, "attack")
+	round := model.NewRound(roundID, match.ID, playerCard.ID, npcCard.ID, 1, false, "attack")
 	suite.NoError(round.IsValid())
 
 	roundRepo := NewRoundRepository(suite.Db)

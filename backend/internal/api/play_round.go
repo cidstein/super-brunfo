@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/cidstein/super-brunfo/internal/service"
@@ -10,17 +11,20 @@ import (
 
 func PlayRound(db *pgx.Conn) http.HandlerFunc {
 	type request struct {
-		RoundID   string `json:"round_id" validate:"required"`
-		Attribute string `json:"attribute" validate:"required"`
+		RoundID   string `json:"round_id"`
+		Attribute string `json:"attribute"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		r.Method = http.MethodPut
+		enableCors(&w)
+		log.Printf("PlayRound")
+		log.Print("preflight detected", r.Header)
 
 		pruc := service.PlayRoundUseCase{}
 
 		var req request
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			log.Print(err.Error())
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(err.Error()))
 			return
@@ -28,6 +32,7 @@ func PlayRound(db *pgx.Conn) http.HandlerFunc {
 
 		roundID := req.RoundID
 		if roundID == "" {
+			log.Printf("round_id is required")
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("round_id is required"))
 			return
@@ -35,6 +40,7 @@ func PlayRound(db *pgx.Conn) http.HandlerFunc {
 
 		attribute := req.Attribute
 		if attribute == "" {
+			log.Printf("attribute is required")
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("attribute is required"))
 			return

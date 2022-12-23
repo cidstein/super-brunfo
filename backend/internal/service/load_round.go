@@ -9,26 +9,42 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type PlayRoundUseCase struct {
+type LoadRoundUseCase struct {
 	CardRepository  database.CardRepositoryInterface
+	DeckRepository  database.DeckRepositoryInterface
 	MatchRepository database.MatchRepositoryInterface
 	RoundRepository database.RoundRepositoryInterface
 }
 
-func (p *PlayRoundUseCase) Play(ctx context.Context, db *pgx.Conn, roundID, attribute string) (RoundOutputDTO, error) {
+/*
+Play loads a round
+- Find match
+- Check if match is finished
+- Find the round to be played
+- Find player card
+- Find npc card
+- Return round
+*/
+func (p *LoadRoundUseCase) LoadRound(ctx context.Context, db *pgx.Conn, matchID string) (RoundOutputDTO, error) {
 	p.CardRepository = database.NewCardRepository(db)
+	p.DeckRepository = database.NewDeckRepository(db)
 	p.MatchRepository = database.NewMatchRepository(db)
 	p.RoundRepository = database.NewRoundRepository(db)
 
-	round, err := p.RoundRepository.FindByID(ctx, roundID)
+	match, err := p.MatchRepository.FindByID(ctx, matchID)
 	if err != nil {
-		msg := fmt.Sprintf("error finding round: %v", err)
+		msg := fmt.Sprintf("error finding match: %v", err)
 		return RoundOutputDTO{}, errors.New(msg)
 	}
 
-	match, err := p.MatchRepository.FindByID(ctx, round.MatchID)
+	if match.Finished {
+		msg := fmt.Sprintf("match %s is already finished", matchID)
+		return RoundOutputDTO{}, errors.New(msg)
+	}
+
+	round, err := p.RoundRepository.FindRoundToBePlayed(ctx, matchID)
 	if err != nil {
-		msg := fmt.Sprintf("error finding match: %v", err)
+		msg := fmt.Sprintf("error finding round to be played: %v", err)
 		return RoundOutputDTO{}, errors.New(msg)
 	}
 
@@ -41,21 +57,6 @@ func (p *PlayRoundUseCase) Play(ctx context.Context, db *pgx.Conn, roundID, attr
 	npcCard, err := p.CardRepository.FindByID(ctx, round.NpcCardID)
 	if err != nil {
 		msg := fmt.Sprintf("error finding npc card: %v", err)
-		return RoundOutputDTO{}, errors.New(msg)
-	}
-
-	victory, err := playerCard.Combat(npcCard, attribute)
-	if err != nil {
-		msg := fmt.Sprintf("error playing round: %v", err)
-		return RoundOutputDTO{}, errors.New(msg)
-	}
-
-	round.Victory = victory
-	round.Attribute = attribute
-
-	err = p.RoundRepository.Update(ctx, *round)
-	if err != nil {
-		msg := fmt.Sprintf("error updating round: %v", err)
 		return RoundOutputDTO{}, errors.New(msg)
 	}
 

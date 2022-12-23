@@ -12,12 +12,13 @@ type Round struct {
 	Attribute    string `json:"attribute"`
 }
 
-func NewRound(id string, matchID string, playerCardID string, npcCardID string, victory bool, attribute string) Round {
+func NewRound(id string, matchID string, playerCardID string, npcCardID string, counter int, victory bool, attribute string) Round {
 	return Round{
 		ID:           id,
 		MatchID:      matchID,
 		PlayerCardID: playerCardID,
 		NpcCardID:    npcCardID,
+		Counter:      counter,
 		Victory:      victory,
 		Attribute:    attribute,
 	}
@@ -38,6 +39,10 @@ func (r Round) IsValid() error {
 
 	if r.NpcCardID == "" {
 		return errors.New("npc card ID is required")
+	}
+
+	if r.Counter < 0 {
+		return errors.New("counter must be greater than or equal to 0")
 	}
 
 	if r.Attribute == "" {

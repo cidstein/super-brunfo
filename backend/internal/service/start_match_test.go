@@ -48,6 +48,7 @@ func (suite *StartMatchTestSuite) TestGivenMatch_WhenCreateNewMatch_ShouldStart(
 	smuc.CardRepository = database.NewCardRepository(suite.Db)
 	smuc.DeckRepository = database.NewDeckRepository(suite.Db)
 	smuc.MatchRepository = database.NewMatchRepository(suite.Db)
+	smuc.RoundRepository = database.NewRoundRepository(suite.Db)
 
 	_, err := smuc.Start(suite.ctx, suite.Db)
 	suite.NoError(err)

@@ -8,34 +8,31 @@ import (
 	"github.com/cidstein/super-brunfo/internal/model"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/rs/zerolog/log"
 )
 
 type StartMatchUseCase struct {
 	CardRepository  database.CardRepositoryInterface
 	DeckRepository  database.DeckRepositoryInterface
 	MatchRepository database.MatchRepositoryInterface
+	RoundRepository database.RoundRepositoryInterface
 }
 
-func cardsDTO(cards []model.Card) []CardOutputDTO {
-	var cardsDTO []CardOutputDTO
-	for card := range cards {
-		cardsDTO = append(cardsDTO, CardOutputDTO{
-			ID:           cards[card].ID,
-			Name:         cards[card].Name,
-			Attack:       cards[card].Attack,
-			Defense:      cards[card].Defense,
-			Intelligence: cards[card].Intelligence,
-			Agility:      cards[card].Agility,
-			Resilience:   cards[card].Resilience,
-			ImageURL:     cards[card].ImageURL,
-		})
-	}
-	return cardsDTO
-}
-
+/*
+Start starts a new match
+- Find all cards
+- Split cards in two decks
+- Shuffle decks
+- Save decks
+- Create match
+- Create all the rounds without playing them
+- Return match
+*/
 func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutputDTO, error) {
 	s.CardRepository = database.NewCardRepository(db)
+	s.DeckRepository = database.NewDeckRepository(db)
+	s.MatchRepository = database.NewMatchRepository(db)
+	s.RoundRepository = database.NewRoundRepository(db)
+
 	cards, err := s.CardRepository.FindAll(ctx)
 	if err != nil {
 		msg := "Error finding cards: " + err.Error()
@@ -53,13 +50,6 @@ func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutpu
 	pd.Shuffle()
 	nd.Shuffle()
 
-	log.Info().Msgf("Player deck: %s, %v", pd.ID, pd.Cards)
-	log.Info().Msgf("NPC deck: %s, %v", pd.ID, nd.Cards)
-
-	cardsPlayer := cardsDTO(pd.Cards)
-	cardsNpc := cardsDTO(nd.Cards)
-
-	s.DeckRepository = database.NewDeckRepository(db)
 	playerDeck, err := s.DeckRepository.Save(ctx, pd)
 	if err != nil {
 		msg := "Error saving player deck: " + err.Error()
@@ -75,23 +65,27 @@ func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutpu
 	id := uuid.New().String()
 	match := model.NewMatch(id, playerDeck.ID, npcDeck.ID, false, false)
 
-	s.MatchRepository = database.NewMatchRepository(db)
-
 	err = s.MatchRepository.Save(ctx, match)
 	if err != nil {
 		msg := "Error saving match: " + err.Error()
 		return MatchOutputDTO{}, errors.New(msg)
 	}
 
+	for i := 0; i < 10; i++ {
+		roundID := uuid.New().String()
+		/*
+			Victory and attribute are not set here because they are set when the round is played
+		*/
+		round := model.NewRound(roundID, match.ID, playerDeck.Cards[i].ID, npcDeck.Cards[i].ID, i+1, false, "")
+
+		err = s.RoundRepository.Save(ctx, round)
+		if err != nil {
+			msg := "Error saving round: " + err.Error()
+			return MatchOutputDTO{}, errors.New(msg)
+		}
+	}
+
 	return MatchOutputDTO{
 		ID: match.ID,
-		PlayerDeck: DeckOutputDTO{
-			ID:    playerDeck.ID,
-			Cards: cardsPlayer,
-		},
-		NpcDeck: DeckOutputDTO{
-			ID:    npcDeck.ID,
-			Cards: cardsNpc,
-		},
 	}, nil
 }

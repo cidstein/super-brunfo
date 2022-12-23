@@ -27,7 +27,7 @@ func TestGetCardHandler(t *testing.T) {
 		panic(err)
 	}
 
-	req, err := http.NewRequest("GET", "/getcard?id=9f240160-ed87-44db-b9d9-07a4ea180c28", nil)
+	req, err := http.NewRequest("GET", "/getcard?id=141cbfd9-334e-4a4b-8559-3c6c4b50dc6c", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -13,13 +13,13 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type PlayGameTestSuite struct {
+type LoadRoundTestSuite struct {
 	ctx context.Context
 	suite.Suite
 	Db *pgx.Conn
 }
 
-func (suite *PlayGameTestSuite) SetupSuite() {
+func (suite *LoadRoundTestSuite) SetupSuite() {
 	suite.ctx = context.Background()
 
 	err := godotenv.Load()
@@ -41,12 +41,12 @@ func (suite *PlayGameTestSuite) SetupSuite() {
 	suite.Db = db
 }
 
-func (suite *PlayGameTestSuite) TearDownSuite() {
+func (suite *LoadRoundTestSuite) TearDownSuite() {
 	suite.Db.Close(suite.ctx)
 }
 
-func (suite *PlayGameTestSuite) TestGivenMatch_WhenCreateNewMatch_ShouldReceiveError() {
-	pguc := PlayGameUseCase{}
+func (suite *LoadRoundTestSuite) TestGivenMatch_WhenCreateNewMatch_ShouldReceiveError() {
+	pguc := LoadRoundUseCase{}
 	pguc.CardRepository = database.NewCardRepository(suite.Db)
 	pguc.DeckRepository = database.NewDeckRepository(suite.Db)
 	pguc.MatchRepository = database.NewMatchRepository(suite.Db)
@@ -80,6 +80,6 @@ func (suite *PlayGameTestSuite) TestGivenMatch_WhenCreateNewMatch_ShouldReceiveE
 	err = pguc.MatchRepository.Save(suite.ctx, match)
 	suite.NoError(err)
 
-	_, err = pguc.Play(suite.ctx, suite.Db, matchID, "attack")
+	_, err = pguc.LoadRound(suite.ctx, suite.Db, matchID)
 	suite.NoError(err)
 }

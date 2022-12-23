@@ -26,11 +26,10 @@ type MatchOutputDTO struct {
 }
 
 type RoundOutputDTO struct {
-	ID         string
-	Match      MatchOutputDTO
-	PlayerCard CardOutputDTO
-	NpcCard    CardOutputDTO
-	Counter    int
-	Victory    bool
-	Attribute  string
+	ID        string
+	Match     MatchOutputDTO
+	Cards     []CardOutputDTO
+	Counter   int
+	Victory   bool
+	Attribute string
 }
