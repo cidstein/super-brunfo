@@ -40,6 +40,7 @@ func main() {
 	})
 	http.HandleFunc("/start", api.StartMatch(db))
 	http.HandleFunc("/play", api.PlayGame(db))
+	http.HandleFunc("/playround", api.PlayRound(db))
 	http.HandleFunc("/listcards", api.ListCards(db))
 	http.HandleFunc("/listmatches", api.ListMatches(db))
 	http.HandleFunc("/getcard", api.GetCard(db))

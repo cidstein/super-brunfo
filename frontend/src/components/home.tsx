@@ -16,7 +16,7 @@ import Round from './round';
     const radios = [
       { name: 'Matches', value: '1' },
       { name: 'Card list', value: '2' },
-      { name: 'Statistics', value: '3' },
+      { name: 'Game', value: '3' },
     ];
 
     return (

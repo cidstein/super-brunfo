@@ -10,6 +10,7 @@ import (
 type RoundRepositoryInterface interface {
 	Save(ctx context.Context, round model.Round) error
 	Update(ctx context.Context, round model.Round) error
+	FindByID(ctx context.Context, id string) (*model.Round, error)
 	FindCardsByID(ctx context.Context, id string) ([]model.Card, error)
 }
 
@@ -24,11 +25,12 @@ func NewRoundRepository(db *pgx.Conn) *RoundRepository {
 func (r *RoundRepository) Save(ctx context.Context, round model.Round) error {
 	_, err := r.Db.Exec(
 		ctx,
-		"INSERT INTO round (id, match_id, player_card_id, npc_card_id, victory, attribute) VALUES ($1, $2, $3, $4, $5, $6)",
+		"INSERT INTO round (id, match_id, player_card_id, npc_card_id, counter, victory, attribute) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		round.ID,
 		round.MatchID,
 		round.PlayerCardID,
 		round.NpcCardID,
+		round.Counter,
 		round.Victory,
 		round.Attribute,
 	)
@@ -39,16 +41,52 @@ func (r *RoundRepository) Save(ctx context.Context, round model.Round) error {
 func (r *RoundRepository) Update(ctx context.Context, round model.Round) error {
 	_, err := r.Db.Exec(
 		ctx,
-		"UPDATE round SET match_id = $1, player_card_id = $2, npc_card_id = $3, victory = $4, attribute = $5 WHERE id = $6",
+		`
+			UPDATE
+				round
+			SET
+				match_id = $1,
+				player_card_id = $2,
+				npc_card_id = $3,
+				counter = $4,
+				victory = $5,
+				attribute = $6
+			WHERE
+				id = $7
+		`,
 		round.MatchID,
 		round.PlayerCardID,
 		round.NpcCardID,
+		round.Counter,
 		round.Victory,
 		round.Attribute,
 		round.ID,
 	)
 
 	return err
+}
+
+func (r *RoundRepository) FindByID(ctx context.Context, id string) (*model.Round, error) {
+	round := model.Round{}
+	err := r.Db.QueryRow(
+		ctx,
+		"SELECT id, match_id, player_card_id, npc_card_id, counter, victory, attribute FROM round WHERE id = $1",
+		id,
+	).Scan(
+		&round.ID,
+		&round.MatchID,
+		&round.PlayerCardID,
+		&round.NpcCardID,
+		&round.Counter,
+		&round.Victory,
+		&round.Attribute,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &round, nil
 }
 
 func (r *RoundRepository) FindCardsByID(ctx context.Context, id string) ([]model.Card, error) {

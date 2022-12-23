@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Button, ButtonGroup } from 'react-bootstrap';
 
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -19,13 +20,13 @@ export default function ActionAreaCard(props: CardProps) {
     <Card style={{ width: '15rem' }}>
       <Card.Header as="h6">{name}</Card.Header>
       <Card.Img src={imageURL} bsPrefix="customCardImg" />
-      <ListGroup className="list-group-flush">
-        <ListGroup.Item>{`Attack ${attack}`}</ListGroup.Item>
-        <ListGroup.Item>{`Defense ${defense}`}</ListGroup.Item>
-        <ListGroup.Item>{`Intelligence ${intelligence}`}</ListGroup.Item>
-        <ListGroup.Item>{`Agility ${agility}`}</ListGroup.Item>
-        <ListGroup.Item>{`Resilience ${resilience}`}</ListGroup.Item>
-      </ListGroup>
+      <ButtonGroup vertical className="list-group-flush" >
+        <Button variant="light">{`Attack ${attack}`}</Button>
+        <Button variant="light">{`Defense ${defense}`}</Button>
+        <Button variant="light">{`Intelligence ${intelligence}`}</Button>
+        <Button variant="light">{`Agility ${agility}`}</Button>
+        <Button variant="light">{`Resilience ${resilience}`}</Button>
+      </ButtonGroup>
     </Card>
   );
 }
