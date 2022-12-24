@@ -1,36 +1,25 @@
 package api
 
 import (
-	"encoding/json"
-	"net/http"
-
 	"github.com/cidstein/super-brunfo/internal/service"
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
 
-func ListCards(db *pgx.Conn) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		enableCors(&w)
-		r.Method = http.MethodGet
-
-		lcuc := service.ListCardsUseCase{}
-
-		lc, err := lcuc.ListCards(r.Context(), db)
+func ListCards(db *pgx.Conn) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		s := service.ListCardsUseCase{}
+		lc, err := s.ListCards(c.Request.Context(), db)
 		if err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			w.Write([]byte(err.Error()))
+			c.String(500, err.Error())
 			return
 		}
 
-		res, err := json.Marshal(lc)
-		if err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			w.Write([]byte(err.Error()))
+		if len(lc) == 0 {
+			c.String(404, "No cards found")
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(res)
+		c.JSON(200, lc)
 	}
 }

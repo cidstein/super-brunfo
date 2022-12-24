@@ -1,43 +1,32 @@
 package api
 
 import (
-	"encoding/json"
-	"net/http"
-
 	"github.com/cidstein/super-brunfo/internal/service"
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
 
-func LoadRound(db *pgx.Conn) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		enableCors(&w)
-		r.Method = http.MethodGet
+func LoadRound(db *pgx.Conn) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		s := service.LoadRoundUseCase{}
 
-		lruc := service.LoadRoundUseCase{}
-
-		matchID := r.URL.Query().Get("match_id")
+		matchID := c.Query("match_id")
 		if matchID == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("match_id is required"))
+			c.String(400, "match_id is required")
 			return
 		}
 
-		lr, err := lruc.LoadRound(r.Context(), db, matchID)
+		lr, err := s.LoadRound(c.Request.Context(), db, matchID)
 		if err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			w.Write([]byte(err.Error()))
+			c.String(502, err.Error())
 			return
 		}
 
-		res, err := json.Marshal(lr)
-		if err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			w.Write([]byte(err.Error()))
+		if lr.ID == "" {
+			c.String(404, "No round found")
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(res)
+		c.JSON(200, lr)
 	}
 }
