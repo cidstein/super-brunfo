@@ -1,36 +1,25 @@
 package api
 
 import (
-	"encoding/json"
-	"net/http"
-
 	"github.com/cidstein/super-brunfo/internal/service"
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
 
-func ListMatches(db *pgx.Conn) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		enableCors(&w)
-		r.Method = http.MethodGet
-
-		lmuc := service.ListMatchesUseCase{}
-
-		lc, err := lmuc.ListMatches(r.Context(), db)
+func ListMatches(db *pgx.Conn) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		s := service.ListMatchesUseCase{}
+		lm, err := s.ListMatches(c.Request.Context(), db)
 		if err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			w.Write([]byte(err.Error()))
+			c.String(500, err.Error())
 			return
 		}
 
-		res, err := json.Marshal(lc)
-		if err != nil {
-			w.WriteHeader(http.StatusBadGateway)
-			w.Write([]byte(err.Error()))
+		if len(lm) == 0 {
+			c.String(404, "No matches found")
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(res)
+		c.JSON(200, lm)
 	}
 }

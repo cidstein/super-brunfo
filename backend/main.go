@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog/log"
@@ -35,15 +37,17 @@ func main() {
 	/* Gin router */
 	router := gin.Default()
 
-	// router.Use(cors.Middleware(cors.Config{
-	// 	Origins:         "*",
-	// 	Methods:         "GET, PUT, POST, DELETE",
-	// 	RequestHeaders:  "Origin, Authorization, Content-Type",
-	// 	ExposedHeaders:  "",
-	// 	MaxAge:          50 * time.Second,
-	// 	Credentials:     true,
-	// 	ValidateHeaders: false,
-	// }))
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "https://github.com"},
+		AllowMethods:     []string{"PUT", "PATCH"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "http://localhost:3000"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 
 	router.GET("/", api.Home())
 	router.GET("/version", api.Version(config.Version))
@@ -51,7 +55,7 @@ func main() {
 	router.GET("/loadround", api.LoadRound(db))
 	router.PUT("/playround", api.PlayRound(db))
 	router.GET("/listcards", api.ListCards(db))
-	// http.HandleFunc("/listmatches", api.ListMatches(db))
+	router.GET("/listmatches", api.ListMatches(db))
 	// http.HandleFunc("/getcard", api.GetCard(db))
 	// http.HandleFunc("/getroundcards", api.GetRoundCards(db))
 
