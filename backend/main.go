@@ -31,17 +31,42 @@ func main() {
 	db, err := pgx.Connect(ctx, config.DatabaseUrl)
 	if err != nil {
 		fmt.Println("Error connecting to database")
-		// panic(err)
+		panic(err)
 	}
 
 	/* Gin router */
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "https://github.com"},
-		AllowMethods:     []string{"PUT", "PATCH"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
+		AllowOrigins: []string{"http://localhost:3000", "https://github.com"},
+		AllowMethods: []string{"GET", "POST", "PUT", "OPTIONS", "PATCH"},
+		AllowHeaders: []string{
+			"Origin",
+			"Content-Length",
+			"Content-Type",
+			"Authorization",
+			"Access-Control-Allow-Origin",
+			"Access-Control-Allow-Headers",
+			"Access-Control-Allow-Methods",
+			"Access-Control-Allow-Credentials",
+			"Access-Control-Expose-Headers",
+			"Access-Control-Max-Age",
+			"Access-Control-Request-Headers",
+			"Access-Control-Request-Method",
+		},
+		ExposeHeaders: []string{
+			"Content-Length",
+			"Content-Type",
+			"Authorization",
+			"Access-Control-Allow-Origin",
+			"Access-Control-Allow-Headers",
+			"Access-Control-Allow-Methods",
+			"Access-Control-Allow-Credentials",
+			"Access-Control-Expose-Headers",
+			"Access-Control-Max-Age",
+			"Access-Control-Request-Headers",
+			"Access-Control-Request-Method",
+		},
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
 			return origin == "http://localhost:3000"
@@ -51,7 +76,7 @@ func main() {
 
 	router.GET("/", api.Home())
 	router.GET("/version", api.Version(config.Version))
-	// http.HandleFunc("/start", api.StartMatch(db))
+	router.GET("/start", api.StartMatch(db))
 	router.GET("/loadround", api.LoadRound(db))
 	router.PUT("/playround", api.PlayRound(db))
 	router.GET("/listcards", api.ListCards(db))

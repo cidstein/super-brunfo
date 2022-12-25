@@ -69,7 +69,7 @@ import Round from './round';
                     {loadListCard && <ListCards />}
                     {loadStatistics &&
                         <Round
-                            id={'abc04112-5012-4913-9a40-f906a6be2d12'}
+                            id={'dd719a3d-bad2-44cc-a82a-e181077f7fa9'}
                             matchId={''}
                             playerCardId={''}
                             npcCardId={''}

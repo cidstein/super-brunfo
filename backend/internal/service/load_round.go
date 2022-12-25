@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/cidstein/super-brunfo/internal/infra/database"
 	"github.com/jackc/pgx/v5"
@@ -33,29 +34,34 @@ func (p *LoadRoundUseCase) LoadRound(ctx context.Context, db *pgx.Conn, matchID 
 
 	match, err := p.MatchRepository.FindByID(ctx, matchID)
 	if err != nil {
+		log.Printf("error finding match: %v", err)
 		msg := fmt.Sprintf("error finding match: %v", err)
 		return RoundOutputDTO{}, errors.New(msg)
 	}
 
 	if match.Finished {
+		log.Printf("match %s is already finished", matchID)
 		msg := fmt.Sprintf("match %s is already finished", matchID)
 		return RoundOutputDTO{}, errors.New(msg)
 	}
 
 	round, err := p.RoundRepository.FindRoundToBePlayed(ctx, matchID)
 	if err != nil {
+		log.Printf("error finding round to be played: %v", err)
 		msg := fmt.Sprintf("error finding round to be played: %v", err)
 		return RoundOutputDTO{}, errors.New(msg)
 	}
 
 	playerCard, err := p.CardRepository.FindByID(ctx, round.PlayerCardID)
 	if err != nil {
+		log.Printf("error finding player card: %v", err)
 		msg := fmt.Sprintf("error finding player card: %v", err)
 		return RoundOutputDTO{}, errors.New(msg)
 	}
 
 	npcCard, err := p.CardRepository.FindByID(ctx, round.NpcCardID)
 	if err != nil {
+		log.Printf("error finding npc card: %v", err)
 		msg := fmt.Sprintf("error finding npc card: %v", err)
 		return RoundOutputDTO{}, errors.New(msg)
 	}
