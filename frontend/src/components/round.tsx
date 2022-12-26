@@ -1,20 +1,12 @@
-import { Card, Container, Row, Col, ListGroup, Button, ButtonGroup } from 'react-bootstrap';
-
-import ActionAreaCard from './card';
 import { useEffect, useState } from 'react';
 
-interface RoundProps {
-  id: string;
-  matchId: string;
-  playerCardId: string;
-  npcCardId: string;
-  counter: number;
-  victory: boolean;
-  finished: boolean;
-}
+import { useParams } from 'react-router-dom';
+import { Card, Container, Row, Col, ListGroup, Button, ButtonGroup } from 'react-bootstrap';
 
-export default function Round(props: RoundProps) {
-  const { id } = props;
+export default function Round() {
+  let params = useParams();
+  let id = params.id;
+  
   const [ round, setRound ] = useState({
     ID: "",
     Match: {
@@ -56,9 +48,8 @@ export default function Round(props: RoundProps) {
        .catch((err) => {
           console.log(err.message);
        });
-  }, []);
+  }, [id]);
 
-  // TODO: Fix this function, problem with CORS
   function handleAttributeClick(attribute: string) {
     const requestOptions = {
       method: 'PUT',
@@ -84,7 +75,6 @@ export default function Round(props: RoundProps) {
           <ListGroup className="list-group-flush">
             <ListGroup.Item>{`Match #${round.Match.Counter}`}</ListGroup.Item>
             <ListGroup.Item>{`Round #${round.Counter}`}</ListGroup.Item>
-            <ListGroup.Item>{`Round: ${round.ID}`}</ListGroup.Item>
             <ListGroup.Item>{`Victory: ${round.Victory}`}</ListGroup.Item>
             <ListGroup.Item>{`Attribute: ${round.Attribute}`}</ListGroup.Item>
           </ListGroup>

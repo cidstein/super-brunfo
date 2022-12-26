@@ -1,27 +1,20 @@
 import { useEffect, useState } from "react";
 
+import { Button, ButtonGroup } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
 
-import Paper from "@mui/material/Paper";
-import { styled } from "@mui/material/styles";
-import List from "@mui/material/List";
-import ListItemText from "@mui/material/ListItemText/ListItemText";
-import ListItem from "@mui/material/ListItem";
-import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
-import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import { IconButton } from "@material-ui/core";
+import Round from "./round";
+
+interface Match {
+    ID: string;
+    Counter: number;
+    Finished: boolean;
+    Victory: boolean;
+}
 
 export default function ListMatches() {
-    const [matches, setMatches] = useState<any[]>([]);
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-        ...theme.typography.body2,
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-      }));
+    const [matches, setMatches] = useState<Match[]>([]);
+    let navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:8080/listmatches', {
@@ -41,29 +34,23 @@ export default function ListMatches() {
            });
       }, []);
 
-    function victory(match: any) {
-      if (match.Victory) {
-        return <MilitaryTechIcon />
-      } else if (match.Finished) {
-        return <SentimentVeryDissatisfiedIcon />
-      } else {
-        return <PlayCircleOutlineIcon />
-      }
+    function loadGame(match_id: string) {
+        navigate(`/round/${match_id}`);
     }
 
     return (
-      <List sx={{ width: '100%', maxWidth: 360 }}>
+      <ButtonGroup vertical size='lg'>
         {matches.map((match, index) => (
-          <ListItem key={index}>
-            <IconButton edge="start" color="inherit" aria-label="menu">
-              <Avatar>
-                {victory(match)}
-              </Avatar>
-            </IconButton>
-            <ListItemText primary={`Partida #${match.Counter}`} />
-          </ListItem>
+          <Button
+            key={index}
+            variant="outline-dark"
+            size="lg"
+            onClick={() => loadGame(match.ID)}
+          >
+            {`Partida #${match.Counter}`}
+          </Button>
         ))}
-      </List>
+      </ButtonGroup>
     );
 }
     

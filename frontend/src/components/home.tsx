@@ -6,11 +6,10 @@ import Stack from 'react-bootstrap/Stack';
 
 import ListCards from './list-cards';
 import ListMatches from './list-matches';
-import Round from './round';
+
   export default function Home() {
     const [loadMatches, setLoadMatches] = useState(false);
     const [loadListCard, setLoadListCard] = useState(false);
-    const [loadStatistics, setLoadStatistics] = useState(false);
     const [radioValue, setRadioValue] = useState('1');
   
     const radios = [
@@ -24,7 +23,7 @@ import Round from './round';
             <Row>
                 <Navbar bg="dark" variant="dark">
                     <Container>
-                        <Navbar.Brand href="#home">Super Brunfo</Navbar.Brand>
+                        <Navbar.Brand >Super Brunfo</Navbar.Brand>
                     </Container>
                 </Navbar>
             </Row>
@@ -46,15 +45,12 @@ import Round from './round';
                                     if (radio.value === '1') {
                                         setLoadMatches(true);
                                         setLoadListCard(false);
-                                        setLoadStatistics(false);
                                     } else if (radio.value === '2') {
                                         setLoadMatches(false);
                                         setLoadListCard(true);
-                                        setLoadStatistics(false);
                                     } else if (radio.value === '3') {
                                         setLoadMatches(false);
                                         setLoadListCard(false);
-                                        setLoadStatistics(true);
                                     }
                                 }}
                                 >
@@ -67,23 +63,8 @@ import Round from './round';
                 <Col md={10}>
                     {loadMatches && <ListMatches />}
                     {loadListCard && <ListCards />}
-                    {loadStatistics &&
-                        <Round
-                            id={'dd719a3d-bad2-44cc-a82a-e181077f7fa9'}
-                            matchId={''}
-                            playerCardId={''}
-                            npcCardId={''}
-                            counter={0}
-                            victory={false}
-                            finished={false}
-                        />}
                 </Col>
             </Row>
         </Container>
-
-
-
-
-
     )
 }
