@@ -32,15 +32,70 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
+.customCarouselCaption {
+  background-color: #232323;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.customBackground {
+  background-color: #232323;
+}
+
+.customCardImgOverlay {
+  height: 430px;
+  width: auto;
+}
+
+.customImgCarousel {
+  width: 1150px;
+  height: 650px;
+}
+
 .customCardImg {
-  height: 250px;
+  position: relative;
+  height: 190px;
+  width: 225px;
+  top: -8px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.customStack {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  margin: auto;
+  padding-top: 10px;
+
 }
 
 .add-space {
   margin: 0px;
+}
+
+.p-divider-solid.p-divider-horizontal:before {
+  border-top-style: solid !important;
+}
+
+.p-divider-dashed.p-divider-horizontal:before {
+  border-top-style: dashed !important;
+}
+
+.p-divider-solid.p-divider-vertical:before {
+  border-left-style: solid !important;
 }
