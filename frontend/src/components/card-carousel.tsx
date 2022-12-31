@@ -100,6 +100,7 @@ export default function CardCarousel() {
                     intelligence={card.Intelligence}
                     agility={card.Agility}
                     resilience={card.Resilience}
+                    flavourText={card.FlavourText}
                     imageURL={card.ImageURL}
                   />
                 </div>

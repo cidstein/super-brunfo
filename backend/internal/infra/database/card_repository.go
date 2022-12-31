@@ -25,7 +25,7 @@ func NewCardRepository(db *pgx.Conn) *CardRepository {
 func (r *CardRepository) Save(ctx context.Context, card model.Card) error {
 	_, err := r.Db.Exec(
 		ctx,
-		"INSERT INTO card (id, name, attack, defense, intelligence, agility, resilience, image_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+		"INSERT INTO card (id, name, attack, defense, intelligence, agility, resilience, flavour_text, image_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
 		card.ID,
 		card.Name,
 		card.Attack,
@@ -33,6 +33,7 @@ func (r *CardRepository) Save(ctx context.Context, card model.Card) error {
 		card.Intelligence,
 		card.Agility,
 		card.Resilience,
+		card.FlavourText,
 		card.ImageURL,
 	)
 
@@ -54,15 +55,15 @@ func (r *CardRepository) FindByID(ctx context.Context, id string) (*model.Card, 
 
 	err := r.Db.QueryRow(
 		ctx,
-		"SELECT id, name, attack, defense, intelligence, agility, resilience, image_url FROM card WHERE id = $1",
+		"SELECT id, name, attack, defense, intelligence, agility, resilience, flavour_text, image_url FROM card WHERE id = $1",
 		id,
-	).Scan(&card.ID, &card.Name, &card.Attack, &card.Defense, &card.Intelligence, &card.Agility, &card.Resilience, &card.ImageURL)
+	).Scan(&card.ID, &card.Name, &card.Attack, &card.Defense, &card.Intelligence, &card.Agility, &card.Resilience, &card.FlavourText, &card.ImageURL)
 
 	return &card, err
 }
 
 func (r *CardRepository) FindAll(ctx context.Context) ([]model.Card, error) {
-	rows, err := r.Db.Query(ctx, "select id, name, attack, defense, intelligence, agility, resilience, image_url from card")
+	rows, err := r.Db.Query(ctx, "select id, name, attack, defense, intelligence, agility, resilience, flavour_text, image_url from card")
 
 	if err != nil {
 		return nil, err
@@ -80,6 +81,7 @@ func (r *CardRepository) FindAll(ctx context.Context) ([]model.Card, error) {
 			&card.Intelligence,
 			&card.Agility,
 			&card.Resilience,
+			&card.FlavourText,
 			&card.ImageURL,
 		); err != nil {
 			return nil, err

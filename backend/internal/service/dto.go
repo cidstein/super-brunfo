@@ -8,6 +8,7 @@ type CardOutputDTO struct {
 	Intelligence int
 	Agility      int
 	Resilience   int
+	FlavourText  string
 	ImageURL     string
 }
 

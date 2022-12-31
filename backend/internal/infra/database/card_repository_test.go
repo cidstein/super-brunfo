@@ -46,7 +46,7 @@ func (suite *CardRepositoryTestSuite) TearDownSuite() {
 
 func (suite *CardRepositoryTestSuite) TestGivenAnCard_WhenSave_ThenShouldSaveCard() {
 	id := uuid.New().String()
-	card := model.NewCard(id, "name", 0, 0, 0, 0, 0, "https://1drv.ms/u/s!Aq4ssY1EMmRWh9o6Ax8aMkel7eetng?e=s1TMI2")
+	card := model.NewCard(id, "name", 0, 0, 0, 0, 0, "a", "https://1drv.ms/u/s!Aq4ssY1EMmRWh9o6Ax8aMkel7eetng?e=s1TMI2")
 	suite.NoError(card.IsValid())
 	repo := NewCardRepository(suite.Db)
 
