@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS card (
     intelligence integer NOT NULL default 0,
     agility integer NOT NULL default 0,
     resilience integer NOT NULL default 0,
+    flavour_text text NOT NULL default '',
     image_url text NOT NULL default '',
     created_at timestamp with time zone NOT NULL default now(),
     updated_at timestamp with time zone NOT NULL default now()

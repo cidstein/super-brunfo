@@ -1,17 +1,3 @@
-import * as React from 'react';
-
-// import { Button, ButtonGroup, OverlayTrigger, Stack, Tooltip } from 'react-bootstrap';
-
-// import Card from 'react-bootstrap/Card';
-// import ListGroup from 'react-bootstrap/ListGroup';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRocket, faBrain, faShield, faDumbbell, faRunning } from '@fortawesome/free-solid-svg-icons'
-
-import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
-import { Image } from 'primereact/image';
-
 interface CardProps {
   name: string;
   attack: string;
@@ -59,7 +45,7 @@ export default function ActionAreaCard(props: CardProps) {
             <div className="fbi-center"></div>
 
             <div className="fbi-right">
-              &#x99; &amp; &#169; 2016 Wizards of the Coast
+              &#169; 2022 Creatures of infinity
             </div>
           </div>
         </div>
