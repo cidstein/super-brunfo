@@ -76,7 +76,7 @@ func main() {
 
 	router.GET("/", api.Home())
 	router.GET("/version", api.Version(config.Version))
-	router.GET("/start", api.StartMatch(db))
+	router.POST("/start", api.StartMatch(db))
 	router.GET("/loadround", api.LoadRound(db))
 	router.PUT("/playround", api.PlayRound(db))
 	router.GET("/listcards", api.ListCards(db))

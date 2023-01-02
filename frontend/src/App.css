@@ -120,8 +120,7 @@
   border-top-right-radius: 6px;
   border-bottom-left-radius: 8%;
   border-bottom-right-radius: 8%;
-  background-image: url(https://i.imgur.com/6dSU7fE.png);
-  /* background-image: url(https://image.ibb.co/e1XKAS/green_background.jpg); */
+  background-image: url(./../public/cards/runes_background.png);
   background-repeat: no-repeat;
   background-size: cover;
   display: flex;
@@ -149,15 +148,15 @@
 .frame-type-line {
   box-shadow:
     0 0 0 2px #171314,
-    0 0 0 5px #26714A,
+    0 0 0 5px #266c71,
     -3px 3px 2px 5px #171314;
 
   margin-bottom: 7px;
 }
 
 .frame-text-box {
-  box-shadow:
-    0 0 0 5px #26714A,
+  box-shadow: 0 0 0 5px #266c71,
+    0 0 0 5px #266c71,
     -3px 3px 2px 5px #171314;
 }
 
@@ -185,10 +184,9 @@
   z-index: 1;
   position: relative;
   height: 108%;
-  max-width: 97%;
-  left: 1%;
-  top: 0.5%;
-  left: 1.2%;
+  max-width: 93%;
+  top: 2.7%;
+  left: 4.0%;
   display: flex;
   flex-direction: column;
 }
@@ -250,7 +248,7 @@
 .frame-text-box {
   margin: 0 10px;
   background: #d3ded6;
-  background-image: url(https://image.ibb.co/dFcNx7/tile_bg_2.jpg);
+  background-image: url(./../public/cards/text_background.jpg);
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -261,6 +259,8 @@
 .flavour-text {
   font-style: italic;
   padding: 10px 0;
+  min-width: 393px;
+  min-height: 180px;
 }
 
 p {
@@ -301,7 +301,7 @@ fbi-left {
   bottom: 11px;
   z-index: 2;
   background: lightgray;
-  background-image: url(https://image.ibb.co/jyq34n/holofoil_texture_2.jpg);
+  background-image: url(./../public/cards/fbi_background.jpg);
   box-shadow:
     0 0 0 4px #171314;
 }
@@ -318,4 +318,19 @@ fbi-left {
 .frame-bottom-info img {
   overflow: hidden;
   max-width: 10px;
+}
+
+/* CarouselDemo.css */
+
+.carousel-demo .product-item .product-item-content {
+  border: 1px solid var(--surface-d);
+  border-radius: 3px;
+  margin: .3rem;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.carousel-demo .product-item .product-image {
+  width: 50%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }

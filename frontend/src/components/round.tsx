@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 import { Card, Container, Row, Col, ListGroup, Button, ButtonGroup } from 'react-bootstrap';
+import ActionAreaCard from './card';
 
 export default function Round() {
   let params = useParams();
   let id = params.id;
-  
-  const [ round, setRound ] = useState({
+
+  const [round, setRound] = useState({
     ID: "",
     Match: {
       ID: "",
@@ -19,12 +20,13 @@ export default function Round() {
       {
         ID: "",
         Name: "",
-        ImageURL: "",
         Attack: 0,
         Defense: 0,
         Intelligence: 0,
         Agility: 0,
         Resilience: 0,
+        FlavourText: "",
+        ImageURL: "",
       },
     ],
     Counter: 0,
@@ -41,13 +43,13 @@ export default function Round() {
       },
       method: 'GET',
     })
-       .then((response) => response.json())
-       .then((data) => {
+      .then((response) => response.json())
+      .then((data) => {
         setRound(data);
-       })
-       .catch((err) => {
-          console.log(err.message);
-       });
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   }, [id]);
 
   function handleAttributeClick(attribute: string) {
@@ -61,13 +63,13 @@ export default function Round() {
 
     };
     fetch('http://localhost:8080/playround', requestOptions)
-        .then(response => response.json())
-        .then(data => setRound(data))
-        .catch((err) => {
-          console.log(err.message);
-        });
+      .then(response => response.json())
+      .then(data => setRound(data))
+      .catch((err) => {
+        console.log(err.message);
+      });
   }
-  
+
   return (
     <Container className="container">
       <Row>
@@ -80,18 +82,17 @@ export default function Round() {
           </ListGroup>
         </Col>
         {round.Cards.map((card, index) => (
-          <Col md={5} key={index} className="mx-auto my-2">
-              <Card style={{ width: '15rem' }}>
-              <Card.Header as="h6">{card.Name}</Card.Header>
-              <Card.Img src={card.ImageURL} bsPrefix="customCardImg" />
-              <ButtonGroup vertical className="list-group-flush" >
-                <Button variant="light" onClick={() => handleAttributeClick("attack")}> {`Attack ${card.Attack}`}</Button>
-                <Button variant="light">{`Defense ${card.Defense}`}</Button>
-                <Button variant="light">{`Intelligence ${card.Intelligence}`}</Button>
-                <Button variant="light">{`Agility ${card.Agility}`}</Button>
-                <Button variant="light">{`Resilience ${card.Resilience}`}</Button>
-              </ButtonGroup>
-            </Card>
+          <Col md={5} key={index}>
+            <ActionAreaCard
+              name={card.Name}
+              attack={card.Attack}
+              defense={card.Defense}
+              intelligence={card.Intelligence}
+              agility={card.Agility}
+              resilience={card.Resilience}
+              flavourText={card.FlavourText}
+              imageURL={card.ImageURL}
+            />
           </Col>
         ))}
       </Row>

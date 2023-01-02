@@ -1,10 +1,13 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRocket, faBrain, faShield, faDumbbell, faRunning } from '@fortawesome/free-solid-svg-icons'
+
 interface CardProps {
   name: string;
-  attack: string;
-  defense: string;
-  intelligence: string;
-  agility: string;
-  resilience: string;
+  attack: number;
+  defense: number;
+  intelligence: number;
+  agility: number;
+  resilience: number;
   flavourText: string;
   imageURL: string;
 }
@@ -23,17 +26,32 @@ export default function ActionAreaCard(props: CardProps) {
             <i className="ms ms-g" id="mana-icon"></i>
           </div>
 
-          <img className="frame-art" src={imageURL} alt={name} />
+          <img className="frame-art" src={`${imageURL}`} alt={name} />
 
           <div className="frame-type-line">
-            <h1 className="type">Legendary Enchantment</h1>
+            {/* <h1 className="type">Legendary Enchantment</h1> */}
             {/* <img src="https://image.ibb.co/kzaLjn/OGW_R.png" id="set-icon" alt="OGW-icon"> */}
           </div>
 
           <div className="frame-text-box">
             {/* <p className="description ftb-inner-margin">Cosmic Dragon is a legendary creature with flying and haste abilities
             </p> */}
-            <p className="flavour-text">{flavourText}</p>
+            <div className="flavour-text" >{flavourText}</div>
+
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginLeft: "25px",
+              marginRight: "25px",
+            }}
+            >
+              <FontAwesomeIcon icon={faRocket} />
+              <FontAwesomeIcon icon={faShield} />
+              <FontAwesomeIcon icon={faBrain} />
+              <FontAwesomeIcon icon={faRunning} />
+              <FontAwesomeIcon icon={faDumbbell} />
+            </div>
           </div>
 
           <div className="frame-bottom-info inner-margin">

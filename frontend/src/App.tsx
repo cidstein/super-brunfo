@@ -16,7 +16,7 @@ import CardCarousel from './components/card-carousel';
 function App() {
   return (
     <div className="App" style={{
-      backgroundImage: `url(https://i.imgur.com/kAbGFP0.jpg)`,
+      backgroundImage: `url(/background.jpg)`,
       backgroundSize: 'cover',
       backgroundRepeat: 'repeat',
       backgroundPosition: 'center',

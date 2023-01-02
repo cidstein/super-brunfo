@@ -83,6 +83,7 @@ func (p *LoadRoundUseCase) LoadRound(ctx context.Context, db *pgx.Conn, matchID 
 				Intelligence: playerCard.Intelligence,
 				Agility:      playerCard.Agility,
 				Resilience:   playerCard.Resilience,
+				FlavourText:  playerCard.FlavourText,
 				ImageURL:     playerCard.ImageURL,
 			},
 			{
@@ -93,6 +94,7 @@ func (p *LoadRoundUseCase) LoadRound(ctx context.Context, db *pgx.Conn, matchID 
 				Intelligence: npcCard.Intelligence,
 				Agility:      npcCard.Agility,
 				Resilience:   npcCard.Resilience,
+				FlavourText:  npcCard.FlavourText,
 				ImageURL:     npcCard.ImageURL,
 			},
 		},
