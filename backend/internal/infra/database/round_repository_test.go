@@ -27,11 +27,16 @@ func (suite *RoundRepositoryTestSuite) SetupSuite() {
 		panic(err)
 	}
 
-	dbUrl := os.Getenv("DB_URL")
-	suite.NotEmpty(dbUrl)
+	conn := fmt.Sprintf(
+		"postgresql://%s:%s@%s:%s/%s?sslmode=disable",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	)
 
-	db, err := pgx.Connect(suite.ctx, dbUrl)
-	suite.NoError(err)
+	db, err := pgx.Connect(suite.ctx, conn)
 	if err != nil {
 		fmt.Println("Error connecting to database")
 		panic(err)

@@ -28,7 +28,7 @@ func Get() (*Main, error) {
 	}
 
 	if c.DatabaseUrl == "" {
-		c.DatabaseUrl = "postgres://postgres:postgres@localhost:5432/postgres"
+		c.DatabaseUrl = "postgresql://postgres:postgres@localhost:5432/postgres"
 		fmt.Println("DatabaseUrl: ", c.DatabaseUrl)
 	}
 

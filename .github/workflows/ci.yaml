@@ -6,87 +6,43 @@ on:
       - main
 
 jobs:
-  deploy-dev:
+  test:
+    name: Test
     runs-on: ubuntu-latest
-    env:
-      name: dev
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: 5432
-      DB_NAME: superbrunfo
-      DB_URL: ${{ secrets.DB_URL }}
-      AWS_INSTANCE_SG_ID: sg-0a6f55c2bf1c6081e
+
+    services:
+      postgres:
+        image: postgres:14.1
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+
     steps:
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
-
-      - name: get runner ip address
-        id: ip
-        uses: haythem/public-ip@v1.2
-      - name: whitelist runner ip address
-        run: |
-          aws ec2 authorize-security-group-ingress \
-            --group-id $AWS_INSTANCE_SG_ID \
-            --protocol tcp \
-            --port 5432 \
-            --cidr ${{ steps.ip.outputs.ipv4 }}/32
-
-      - name: Check out code
-        uses: actions/checkout@v3
-
       - name: Set up Go 1.19
         uses: actions/setup-go@v3
         with:
-          go-version: 1.19
+          go-version: ^1.19
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+
+      - name: Install golang-migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate.linux-amd64 /usr/bin/migrate
+          which migrate
+      - name: Run migrations
+        run: migrate -path backend/db/migrations -database postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable -verbose up
 
       - name: Create .env file
-        run: echo "${{secrets.ENV_FILE }}" > backend/internal/infra/database/.env |
-             echo "${{secrets.ENV_FILE }}" > backend/internal/service/.env
-      
-      - name: Run tests
-        run: cd backend && go test -v ./...
+        run:
+          echo "${{secrets.ENV_FILE }}" > backend/internal/infra/database/.env |
+          echo "${{secrets.ENV_FILE }}" > backend/internal/service/.env |
+          echo "${{secrets.ENV_FILE }}" > backend/internal/api/.env
 
-      - name: revoke runner ip address
-        run: |
-          aws ec2 revoke-security-group-ingress \
-            --group-id $AWS_INSTANCE_SG_ID \
-            --protocol tcp \
-            --port 5432 \
-            --cidr ${{ steps.ip.outputs.ipv4 }}/32
-
-#   deploy-stg:
-#     runs-on: ubuntu-latest
-#     env:
-#       name: stg
-#     needs: deploy-dev
-#     steps:
-#       - name: 'Create .env file'
-#         run: |
-#           touch backend/internal/infra/database/.env |
-#           touch backend/internal/service/.env
-#       - uses: actions/checkout@v2
-#       - uses: actions/setup-go@v2
-#         with:
-#           go-version: 1.19
-#       - run: cd backend && go test -v ./...
-
-#   deploy-prd:
-#     runs-on: ubuntu-latest
-#     env:
-#       name: prd
-#     needs: deploy-stg
-#     steps:
-#       - name: 'Create .env file'
-#         run: |
-#           touch backend/internal/infra/database/.env |
-#           touch backend/internal/service/.env
-#       - uses: actions/checkout@v2
-#       - uses: actions/setup-go@v2
-#         with:
-#           go-version: 1.19
-#       - run: cd backend && go test -v ./...
+      - name: Test
+        run: cd backend && go test ./...
