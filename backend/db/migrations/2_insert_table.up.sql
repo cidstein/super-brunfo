@@ -3,7 +3,7 @@ insert into card (name, attack, defense, intelligence, agility, resilience, flav
     ('Rotten Oak Demon', 52, 44, 79, 64, 41, 'The Rotten Oak Demon is a creature born of decay and rot, summoned from the depths of the forest by dark magic. Its twisted branches and corrupted roots draw upon the negative energy of the land, summoning forth a horde of undead minions to do its bidding.', 'https://i.imgur.com/TAWalIh.jpg'),
     ('King Mantis', 63, 34, 92, 43, 21, 'The King Mantis is the undisputed ruler of the jungle, feared by all who dare to cross his path. His razor sharp mandibles can easily snap through the toughest armor, and his swift movements make him almost impossible to evade.', 'https://i.imgur.com/30bacVN.jpg'),
     ('Deep Sea Colossus', 45, 58, 15, 35, 29, 'The Deep Sea Colossus rises from the depths, its tentacles reaching out to grasp and crush any who dare to challenge its dominance. Its massive size and overwhelming strength make it a force to be reckoned with, a true terror of the ocean.', 'https://i.imgur.com/WlgYBMT.jpg'),
-    ('1', 1, 1, 1, 1, 1, '1', '1'),
+    ('Plasmadrome', 76, 59, 65, 54, 62, 'In the neon-lit streets of the city, the sound of clashing blades and the whir of cybernetic enhancements fills the air. At the center of the fray stands Plasmadrome, a warrior duck with a body as tough as steel and a will as unbreakable as his plasma-infused sword.', 'https://i.imgur.com/j36A6oL.jpg'),
     ('2', 2, 2, 2, 2, 2, '2', '2'),
     ('3', 3, 3, 3, 3, 3, '3', '3'),
     ('4', 4, 4, 4, 4, 4, '4', '4'),

@@ -12,6 +12,7 @@ services:
       - postgres
     depends_on:
       - db
+      - redis
     expose:
       - 8080
 
@@ -29,6 +30,15 @@ services:
       - postgres
     volumes: 
       - db:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - redis:/data
 
 networks:
   postgres:
