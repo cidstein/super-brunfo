@@ -50,7 +50,7 @@ func (suite *UserRepositoryTestSuite) TearDownSuite() {
 func (suite *UserRepositoryTestSuite) TestGivenAnUser_WhenSave_ThenShouldSaveUser() {
 	repo := NewUserRepository(suite.Db)
 
-	user, err := repo.FindByEmail(suite.ctx, "cid")
+	user, err := repo.FindByEmail(suite.ctx, "a@b.c")
 	suite.NoError(err)
 	suite.NotNil(user)
 }

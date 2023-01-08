@@ -35,7 +35,7 @@ export default function SignIn() {
               <Form.Control type="password" placeholder="Password" />
             </Form.Group>
             <Button variant="dark" type="submit">
-              Login
+              Sign In
             </Button>
           </Form>
         </Col>

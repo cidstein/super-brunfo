@@ -40,7 +40,7 @@ export default function SignUp() {
               <Form.Control type="nickname" placeholder="Nickname" />
             </Form.Group>
             <Button variant="dark" type="submit">
-              Login
+              Register
             </Button>
           </Form>
         </Col>
