@@ -39,8 +39,7 @@ jobs:
         run: migrate -path backend/db/migrations -database postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable -verbose up
 
       - name: Create .env file
-        run:
-          echo "${{secrets.ENV_FILE }}" > backend/internal/infra/database/.env |
+        run: echo "${{secrets.ENV_FILE }}" > backend/internal/repository/.env |
           echo "${{secrets.ENV_FILE }}" > backend/internal/service/.env |
           echo "${{secrets.ENV_FILE }}" > backend/internal/api/.env
 
