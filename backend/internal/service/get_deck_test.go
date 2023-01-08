@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
 	"github.com/cidstein/super-brunfo/internal/model"
+	"github.com/cidstein/super-brunfo/internal/repository"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
@@ -39,7 +39,7 @@ func (suite *GetDeckTestSuite) SetupSuite() {
 
 	db, err := pgx.Connect(suite.ctx, conn)
 	if err != nil {
-		fmt.Println("Error connecting to database")
+		fmt.Println("Error connecting to repository")
 		panic(err)
 	}
 
@@ -52,8 +52,8 @@ func (suite *GetDeckTestSuite) TearDownSuite() {
 
 func (suite *GetDeckTestSuite) TestGivenDeck_WhenGetDeck_ShouldReceiveDeck() {
 	gduc := GetDeckUseCase{}
-	gduc.DeckRepository = database.NewDeckRepository(suite.Db)
-	gduc.CardRepository = database.NewCardRepository(suite.Db)
+	gduc.DeckRepository = repository.NewDeckRepository(suite.Db)
+	gduc.CardRepository = repository.NewCardRepository(suite.Db)
 
 	cards, err := gduc.CardRepository.FindAll(suite.ctx)
 	suite.NoError(err)

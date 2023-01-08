@@ -12,6 +12,8 @@ import Round from './components/round';
 // import ListCards from './components/list-cards';
 import ListMatches from './components/list-matches';
 import CardCarousel from './components/card-carousel';
+import SignIn from './components/sign-in';
+import SignUp from './components/sign-up';
 
 function App() {
   return (
@@ -26,7 +28,7 @@ function App() {
     }}>
       <BrowserRouter>
         <Routes>
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" element={<SignUp />} />
           <Route path="/" element={<Navigate replace to="/home" />} />
           <Route path="/list-cards" element={<CardCarousel />} />
           <Route path="/list-matches" element={<ListMatches />} />

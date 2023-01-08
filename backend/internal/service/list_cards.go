@@ -3,16 +3,16 @@ package service
 import (
 	"context"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
+	"github.com/cidstein/super-brunfo/internal/repository"
 	"github.com/jackc/pgx/v5"
 )
 
 type ListCardsUseCase struct {
-	CardRepository database.CardRepositoryInterface
+	CardRepository repository.CardRepositoryInterface
 }
 
 func (s *ListCardsUseCase) ListCards(ctx context.Context, db *pgx.Conn) ([]CardOutputDTO, error) {
-	s.CardRepository = database.NewCardRepository(db)
+	s.CardRepository = repository.NewCardRepository(db)
 	cards, err := s.CardRepository.FindAll(ctx)
 	if err != nil {
 		return nil, err

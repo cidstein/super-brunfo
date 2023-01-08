@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
 	"github.com/cidstein/super-brunfo/internal/model"
+	"github.com/cidstein/super-brunfo/internal/repository"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
@@ -39,7 +39,7 @@ func (suite *LoadRoundTestSuite) SetupSuite() {
 
 	db, err := pgx.Connect(suite.ctx, conn)
 	if err != nil {
-		fmt.Println("Error connecting to database")
+		fmt.Println("Error connecting to repository")
 		panic(err)
 	}
 
@@ -52,10 +52,10 @@ func (suite *LoadRoundTestSuite) TearDownSuite() {
 
 func (suite *LoadRoundTestSuite) TestGivenMatch_WhenCreateNewMatch_ShouldReceiveError() {
 	pguc := LoadRoundUseCase{}
-	pguc.CardRepository = database.NewCardRepository(suite.Db)
-	pguc.DeckRepository = database.NewDeckRepository(suite.Db)
-	pguc.MatchRepository = database.NewMatchRepository(suite.Db)
-	pguc.RoundRepository = database.NewRoundRepository(suite.Db)
+	pguc.CardRepository = repository.NewCardRepository(suite.Db)
+	pguc.DeckRepository = repository.NewDeckRepository(suite.Db)
+	pguc.MatchRepository = repository.NewMatchRepository(suite.Db)
+	pguc.RoundRepository = repository.NewRoundRepository(suite.Db)
 
 	matchID := uuid.New().String()
 

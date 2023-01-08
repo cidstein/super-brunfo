@@ -28,7 +28,7 @@ services:
       - '5432:5432'
     networks:
       - postgres
-    volumes: 
+    volumes:
       - db:/var/lib/postgresql/data
 
   redis:
@@ -37,7 +37,7 @@ services:
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes: 
+    volumes:
       - redis:/data
 
 networks:
@@ -46,4 +46,6 @@ networks:
 
 volumes:
   db:
+    driver: local
+  redis:
     driver: local

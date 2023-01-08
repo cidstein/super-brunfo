@@ -3,12 +3,12 @@ package service
 import (
 	"context"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
+	"github.com/cidstein/super-brunfo/internal/repository"
 )
 
 type GetDeckUseCase struct {
-	CardRepository database.CardRepositoryInterface
-	DeckRepository database.DeckRepositoryInterface
+	CardRepository repository.CardRepositoryInterface
+	DeckRepository repository.DeckRepositoryInterface
 }
 
 func (s *GetDeckUseCase) GetDeck(ctx context.Context, deckID string) (DeckOutputDTO, error) {

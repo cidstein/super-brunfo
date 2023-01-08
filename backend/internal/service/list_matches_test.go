@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
+	"github.com/cidstein/super-brunfo/internal/repository"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/suite"
@@ -37,7 +37,7 @@ func (suite *ListMatchesTestSuite) SetupSuite() {
 
 	db, err := pgx.Connect(suite.ctx, conn)
 	if err != nil {
-		fmt.Println("Error connecting to database")
+		fmt.Println("Error connecting to repository")
 		panic(err)
 	}
 
@@ -50,7 +50,7 @@ func (suite *ListMatchesTestSuite) TearDownSuite() {
 
 func (suite *ListMatchesTestSuite) TestGivenNothing_WhenListMatches_ShouldReceiveListMatches() {
 	lmuc := ListMatchesUseCase{}
-	lmuc.MatchRepository = database.NewMatchRepository(suite.Db)
+	lmuc.MatchRepository = repository.NewMatchRepository(suite.Db)
 
 	_, err := lmuc.ListMatches(suite.ctx, suite.Db)
 	suite.NoError(err)

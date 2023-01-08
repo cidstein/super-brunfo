@@ -4,17 +4,17 @@ import (
 	"context"
 	"errors"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
 	"github.com/cidstein/super-brunfo/internal/model"
+	"github.com/cidstein/super-brunfo/internal/repository"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
 type StartMatchUseCase struct {
-	CardRepository  database.CardRepositoryInterface
-	DeckRepository  database.DeckRepositoryInterface
-	MatchRepository database.MatchRepositoryInterface
-	RoundRepository database.RoundRepositoryInterface
+	CardRepository  repository.CardRepositoryInterface
+	DeckRepository  repository.DeckRepositoryInterface
+	MatchRepository repository.MatchRepositoryInterface
+	RoundRepository repository.RoundRepositoryInterface
 }
 
 /*
@@ -28,10 +28,10 @@ Start starts a new match
 - Return match
 */
 func (s *StartMatchUseCase) Start(ctx context.Context, db *pgx.Conn) (MatchOutputDTO, error) {
-	s.CardRepository = database.NewCardRepository(db)
-	s.DeckRepository = database.NewDeckRepository(db)
-	s.MatchRepository = database.NewMatchRepository(db)
-	s.RoundRepository = database.NewRoundRepository(db)
+	s.CardRepository = repository.NewCardRepository(db)
+	s.DeckRepository = repository.NewDeckRepository(db)
+	s.MatchRepository = repository.NewMatchRepository(db)
+	s.RoundRepository = repository.NewRoundRepository(db)
 
 	cards, err := s.CardRepository.FindAll(ctx)
 	if err != nil {

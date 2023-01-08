@@ -3,16 +3,16 @@ package service
 import (
 	"context"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
+	"github.com/cidstein/super-brunfo/internal/repository"
 	"github.com/jackc/pgx/v5"
 )
 
 type ListMatchesUseCase struct {
-	MatchRepository database.MatchRepositoryInterface
+	MatchRepository repository.MatchRepositoryInterface
 }
 
 func (s *ListMatchesUseCase) ListMatches(ctx context.Context, db *pgx.Conn) ([]MatchOutputDTO, error) {
-	s.MatchRepository = database.NewMatchRepository(db)
+	s.MatchRepository = repository.NewMatchRepository(db)
 	matches, err := s.MatchRepository.FindAll(ctx)
 	if err != nil {
 		return nil, err

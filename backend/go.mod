@@ -35,6 +35,7 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/cors v1.4.0
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect

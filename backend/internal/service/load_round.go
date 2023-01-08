@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
+	"github.com/cidstein/super-brunfo/internal/repository"
 	"github.com/jackc/pgx/v5"
 )
 
 type LoadRoundUseCase struct {
-	CardRepository  database.CardRepositoryInterface
-	DeckRepository  database.DeckRepositoryInterface
-	MatchRepository database.MatchRepositoryInterface
-	RoundRepository database.RoundRepositoryInterface
+	CardRepository  repository.CardRepositoryInterface
+	DeckRepository  repository.DeckRepositoryInterface
+	MatchRepository repository.MatchRepositoryInterface
+	RoundRepository repository.RoundRepositoryInterface
 }
 
 /*
@@ -27,10 +27,10 @@ Play loads a round
 - Return round
 */
 func (p *LoadRoundUseCase) LoadRound(ctx context.Context, db *pgx.Conn, matchID string) (RoundOutputDTO, error) {
-	p.CardRepository = database.NewCardRepository(db)
-	p.DeckRepository = database.NewDeckRepository(db)
-	p.MatchRepository = database.NewMatchRepository(db)
-	p.RoundRepository = database.NewRoundRepository(db)
+	p.CardRepository = repository.NewCardRepository(db)
+	p.DeckRepository = repository.NewDeckRepository(db)
+	p.MatchRepository = repository.NewMatchRepository(db)
+	p.RoundRepository = repository.NewRoundRepository(db)
 
 	match, err := p.MatchRepository.FindByID(ctx, matchID)
 	if err != nil {

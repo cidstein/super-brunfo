@@ -5,20 +5,20 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
+	"github.com/cidstein/super-brunfo/internal/repository"
 	"github.com/jackc/pgx/v5"
 )
 
 type PlayRoundUseCase struct {
-	CardRepository  database.CardRepositoryInterface
-	MatchRepository database.MatchRepositoryInterface
-	RoundRepository database.RoundRepositoryInterface
+	CardRepository  repository.CardRepositoryInterface
+	MatchRepository repository.MatchRepositoryInterface
+	RoundRepository repository.RoundRepositoryInterface
 }
 
 func (p *PlayRoundUseCase) Play(ctx context.Context, db *pgx.Conn, roundID, attribute string) (RoundOutputDTO, error) {
-	p.CardRepository = database.NewCardRepository(db)
-	p.MatchRepository = database.NewMatchRepository(db)
-	p.RoundRepository = database.NewRoundRepository(db)
+	p.CardRepository = repository.NewCardRepository(db)
+	p.MatchRepository = repository.NewMatchRepository(db)
+	p.RoundRepository = repository.NewRoundRepository(db)
 
 	round, err := p.RoundRepository.FindByID(ctx, roundID)
 	if err != nil {

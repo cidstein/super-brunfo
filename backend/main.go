@@ -75,6 +75,8 @@ func main() {
 	}))
 
 	router.GET("/", api.Home())
+	router.POST("/signup", api.SignUp(db))
+	router.POST("/signin", api.SignIn(db))
 	router.GET("/version", api.Version(config.Version))
 	router.POST("/start", api.StartMatch(db))
 	router.GET("/loadround", api.LoadRound(db))

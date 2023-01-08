@@ -3,16 +3,16 @@ package service
 import (
 	"context"
 
-	"github.com/cidstein/super-brunfo/internal/infra/database"
+	"github.com/cidstein/super-brunfo/internal/repository"
 	"github.com/jackc/pgx/v5"
 )
 
 type GetRoundCardsUseCase struct {
-	RoundRepository database.RoundRepositoryInterface
+	RoundRepository repository.RoundRepositoryInterface
 }
 
 func (s *GetRoundCardsUseCase) GetRoundCards(ctx context.Context, db *pgx.Conn, roundID string) ([]CardOutputDTO, error) {
-	s.RoundRepository = database.NewRoundRepository(db)
+	s.RoundRepository = repository.NewRoundRepository(db)
 	cards, err := s.RoundRepository.FindCardsByID(ctx, roundID)
 	if err != nil {
 		return nil, err
