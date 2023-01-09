@@ -12,7 +12,8 @@ import (
 
 type UserRepositoryInterface interface {
 	Save(ctx context.Context, user model.User) error
-	FindByEmail(ctx context.Context, username string) (*model.User, error)
+	FindByEmail(ctx context.Context, email string) (*model.User, error)
+	SignIn(ctx context.Context, email string) (*model.User, error)
 }
 
 type UserRepository struct {
@@ -32,7 +33,7 @@ func (r *UserRepository) Save(ctx context.Context, user model.User) error {
 
 	_, err = r.Db.Exec(
 		ctx,
-		"INSERT INTO user (id, username, password, nickname) VALUES ($1, $2, $3, $4)",
+		`INSERT INTO "user" (id, email, password, nickname) VALUES ($1, $2, $3, $4)`,
 		user.ID,
 		user.Email,
 		string(hashedPassword),
@@ -42,13 +43,13 @@ func (r *UserRepository) Save(ctx context.Context, user model.User) error {
 	return err
 }
 
-func (r *UserRepository) FindByEmail(ctx context.Context, username string) (*model.User, error) {
+func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*model.User, error) {
 	var user model.User
 
 	err := r.Db.QueryRow(
 		ctx,
-		"SELECT id, username, password, nickname FROM user WHERE username = $1",
-		username,
+		`SELECT id, email, password, nickname FROM "user" WHERE email = $1`,
+		email,
 	).Scan(&user.ID, &user.Email, &user.Password, &user.Nickname)
 
 	if err != nil {
@@ -58,22 +59,20 @@ func (r *UserRepository) FindByEmail(ctx context.Context, username string) (*mod
 	return &user, nil
 }
 
-func (r *UserRepository) Signin(ctx context.Context, username, password string) (*model.User, error) {
+func (r *UserRepository) SignIn(ctx context.Context, email string) (*model.User, error) {
 	var user model.User
 
 	err := r.Db.QueryRow(
 		ctx,
 		`
 			SELECT
-				id, username, password, nickname
+				id, email, password, nickname
 			FROM
-				user
+				"user"
 			WHERE
-				username = $1
-				AND password = $2
+				email = $1
 		`,
-		username,
-		password,
+		email,
 	).Scan(&user.ID, &user.Email, &user.Password, &user.Nickname)
 
 	if err != nil {

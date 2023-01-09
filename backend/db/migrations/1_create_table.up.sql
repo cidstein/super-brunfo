@@ -50,3 +50,12 @@ CREATE TABLE IF NOT EXISTS round (
     created_at timestamp with time zone NOT NULL default now(),
     updated_at timestamp with time zone NOT NULL default now()
 );
+
+CREATE TABLE IF NOT EXISTS "user" (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email text NOT NULL,
+    "password" text NOT NULL,
+    nickname text NOT NULL,
+    created_at timestamp with time zone NOT NULL default now(),
+    updated_at timestamp with time zone NOT NULL default now()
+);
