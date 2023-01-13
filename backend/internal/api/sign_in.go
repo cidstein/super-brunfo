@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 
@@ -38,6 +39,10 @@ func SignIn(db *pgx.Conn) gin.HandlerFunc {
 			return
 		}
 
-		c.String(200, "ok")
+		ss := sessions.Default(c)
+		ss.Set("email", req.Email)
+		ss.Save()
+
+		c.String(200, "User signed in successfully")
 	}
 }

@@ -6,12 +6,15 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog/log"
 
 	"github.com/cidstein/super-brunfo/conf"
 	"github.com/cidstein/super-brunfo/internal/api"
+	"github.com/cidstein/super-brunfo/internal/middleware"
 )
 
 func main() {
@@ -34,8 +37,10 @@ func main() {
 		panic(err)
 	}
 
-	/* Gin router */
 	router := gin.Default()
+
+	store, _ := redis.NewStore(10, "tcp", "localhost:6379", "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", []byte("secret"))
+	router.Use(sessions.Sessions("mysession", store))
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"http://localhost:3000", "https://github.com"},
@@ -74,17 +79,21 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	router.GET("/", api.Home())
 	router.POST("/signup", api.SignUp(db))
 	router.POST("/signin", api.SignIn(db))
-	router.GET("/version", api.Version(config.Version))
-	router.POST("/start", api.StartMatch(db))
-	router.GET("/loadround", api.LoadRound(db))
-	router.PUT("/playround", api.PlayRound(db))
-	router.GET("/listcards", api.ListCards(db))
-	router.GET("/listmatches", api.ListMatches(db))
-	// http.HandleFunc("/getcard", api.GetCard(db))
-	// http.HandleFunc("/getroundcards", api.GetRoundCards(db))
+	router.POST("/signout", api.SignOut(db))
+
+	auth := router.Group("/auth")
+	auth.Use(middleware.Auth())
+	{
+		auth.GET("/", api.Home())
+		auth.GET("/version", api.Version(config.Version))
+		auth.POST("/start", api.StartMatch(db))
+		auth.GET("/loadround", api.LoadRound(db))
+		auth.PUT("/playround", api.PlayRound(db))
+		auth.GET("/listcards", api.ListCards(db))
+		auth.GET("/listmatches", api.ListMatches(db))
+	}
 
 	router.Run()
 }
